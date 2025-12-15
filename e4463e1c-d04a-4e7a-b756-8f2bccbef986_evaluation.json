@@ -1,0 +1,318 @@
+{
+  "Questions": {
+    "Q1": {
+      "Score": "0",
+      "Comments": {
+        "Introduction": [],
+        "Body": [],
+        "Conclusion": []
+      },
+      "Pages": {
+        "first": "1",
+        "last": "1"
+      },
+      "Summary": "No answer content found for Q1; unable to evaluate legal and political factors on Article 356 usage.",
+      "HygieneSummary": "No visible writing for evaluation; hygiene standards not applicable."
+    },
+    "Q2": {
+      "Score": "4.25",
+      "Comments": {
+        "Introduction": [
+          {
+            "comment": "Clarify precise definition of constitutional morality for stronger opening.",
+            "snippet": "Constitutional morality refers to the adherence of the core value of constitution in the democracy. i.e. a moral obligation of an individual to uphold the constitutional values without any compromise and faith towards it.",
+            "page": 3,
+            "coordinates": [
+              98.78,
+              188.62,
+              516.53,
+              325.03
+            ]
+          }
+        ],
+        "Body": [
+          {
+            "comment": "Include more elaboration on significance but list is adequate.",
+            "snippet": "Significance of Constitutional Morality: 1. safeguard and protect the enforcement of Rule of law in the country. 2. Promote the democratic ideals of nation. 3. Bring progressive transformation in the society through democratic values. 4. Uphold the basic structure doctrine. 5. Achieving the basic purpose of constitutionalism. 6. Uphold the harmonization principle, protect individual rights.",
+            "page": 3,
+            "coordinates": [
+              98.78,
+              356.18,
+              416.56,
+              697.21
+            ]
+          },
+          {
+            "comment": "Effectively present landmark judgments with relevant cases and outcomes.",
+            "snippet": "Landmark Judgements related to constitutional morality: 1. Navtej Singh Johar vs. Union of India (2018): protects the right of LGBTQ+, the court struck down IPC-377 and upheld constitutional morality over public morality. 2. Joseph Shine vs. Union of India (2019): The court upheld right to gender equality and Right to equality and struck down section 497 of IPC which made adultery a crime. Hence the court upheld the constitutional morality. 3. Government of NCT Delhi vs. Union of India: The court upheld constitutional morality as basic structure. 4. Indian Young Lawyers Association vs. State of Kerala (2018) - The exclusion of women in Sabarimala temple violated Article 14 (Equality), Liberty, Fraternity. The court allowed women in temple. The court upheld constitutional morality.",
+            "page": 4,
+            "coordinates": [
+              53.56,
+              75.78,
+              505.82,
+              757.84
+            ]
+          }
+        ],
+        "Conclusion": [
+          {
+            "comment": "Summarize doctrine as essence of constitutionalism and basic structure aptly.",
+            "snippet": "Constitutional morality is the basic essence of Constitution, which upheld the constitutionalism, and adheres to the basic structure.",
+            "page": 4,
+            "coordinates": [
+              53.56,
+              673.63,
+              505.82,
+              757.84
+            ]
+          }
+        ]
+      },
+      "Pages": {
+        "first": 3,
+        "last": 4
+      },
+      "Summary": "Covers definition, significance, key judgments, basic structure linkage well; minor clarity needed in intro.",
+      "HygieneSummary": "Handwriting is generally legible with consistent margins and clear underlining of headings; well structured."
+    },
+    "Q3": {
+      "Score": "4.5",
+      "Comments": {
+        "Introduction": [
+          {
+            "comment": "Clearly define doctrine of basic structure in brief opening.",
+            "snippet": "The doctrine of basic structure refers to - if parliament passes any law which clashes with fundamental right and other basic features of constitution - then the law is declared invalid and void. The basic structure doctrine emerged in - Keshavananda Bharati case.",
+            "page": 5,
+            "coordinates": [
+              95.21,
+              151.57,
+              505.82,
+              294.71
+            ]
+          }
+        ],
+        "Body": [
+          {
+            "comment": "Thoroughly explain judicial evolution through landmark cases with sequencing.",
+            "snippet": "Evolution of doctrine of Basic Structure 1. Shankari Prasad vs. Union of India (1951): The court held that - Parliament can amend any part of the constitution including fundamental right. -> Led to - 1st constitutional amendment - inserted 9th schedule. -> State of Rajasthan (1955): Reaffirmed 2. Sajjan Singh vs. State of Rajasthan (1965): Reaffirmed the previous case - parliament can amend any part of Constitution under Article-368. 3. Golaknath vs. State of Punjab (1967): The court contradicting its previous decision and ruled that parliament cannot amend any part of the Constitution including Fundamental right. 4. 24th constitutional amendment (1971): Parliament restored its authority to amend the constitution. 5. Keshavananda Bharati vs. State of Kerala (1973): -> The supreme court held that the parliament can amend any part of Constitution but cannot alter the basic structure of constitution. -> Judicial review - part of basic structure of constitution. 6. 42nd Constitution amendment (1975): Parliament claimed unlimited amendment power and excluded Judicial review. 7. Minerva Mills vs. Union of India (1980): The court struck down the provisions limiting the power of parliament and upheld judicial review as an integral part of the basic constitution. 8. S.R Bommai vs. Union of India (1994): Federalism, secularism, democracy as the basic structure of constitution.",
+            "page": 5,
+            "coordinates": [
+              95.21,
+              319.98,
+              505.82,
+              555.75
+            ]
+          },
+          {
+            "comment": "Summarize doctrine\u2019s judicial origin and constitutional significance aptly.",
+            "snippet": "The doctrine of basic structure is not mentioned in the constitution but it is the formulation of Judiciary to limit the arbitrariness of legislature and upholds the essence of constitutionalism.",
+            "page": 6,
+            "coordinates": [
+              77.36,
+              606.27,
+              505.82,
+              724.15
+            ]
+          }
+        ],
+        "Conclusion": []
+      },
+      "Pages": {
+        "first": 5,
+        "last": 6
+      },
+      "Summary": "Comprehensive coverage of doctrine evolution and judiciary role; well structured and factually accurate.",
+      "HygieneSummary": "Handwriting mostly clear; bullet points and dates underlined; minor crowding in paragraphs."
+    },
+    "Q4": {
+      "Score": "4.25",
+      "Comments": {
+        "Introduction": [
+          {
+            "comment": "Define balancing challenge between DPSP and Fundamental Rights clearly.",
+            "snippet": "The objective of directive principle is to promote socio-economic welfare of well-being, while, Fundamental right confers basic freedom but both are balanced in harmony. - Justice Chandrachud.",
+            "page": 7,
+            "coordinates": [
+              95.21,
+              168.41,
+              505.82,
+              294.71
+            ]
+          }
+        ],
+        "Body": [
+          {
+            "comment": "Explain key judicial cases with outcome and principle illustrated.",
+            "snippet": "The conflict between Fundamental right and Directive principles - Judicial interpretation 1. Champakam Dorairajan vs. State of Madras (1951) - The law made to enforce the DPSP cannot override fundamental right (FR). The law has to conform and be subsidiary to fundamental right. - If any conflict arises, then Fundamental right prevails over DPSP. 2. Kerala Education Bill (1957): Adopted the theory of harmonization. The Court held that in case of conflict between DPSP & FR - The court must try to incorporate both of them to the extent possible. 3. Keshavananda Bharati vs. State of Kerala (1973): The court struck down the second provision of Article-31C and upheld that the law enacted to give effect Article - 39 (b) & Article - 39 (c) cannot be void. 4. 42nd constitution Amendment, 1976: Parliament expanded the scope of Article 31C and stated if any law made to give effect Art-39(b) and Article-39(c), then the law cannot be void if it violates Article-19 and 14. 5. Minerva Mills vs. Union of India (1980): The court struck down the extension of 31C and brought - harmony and balance between DPSP and F.R.",
+            "page": 7,
+            "coordinates": [
+              95.21,
+              336.82,
+              505.82,
+              522.06
+            ]
+          },
+          {
+            "comment": "Include concluding comment on harmony as basic constitutional feature effectively.",
+            "snippet": "Harmony and balance between DPSP and Fundamental right is a basic feature of Constitution. - Justice P.N. Bhagwati",
+            "page": 8,
+            "coordinates": [
+              77.36,
+              589.43,
+              505.82,
+              690.47
+            ]
+          }
+        ],
+        "Conclusion": []
+      },
+      "Pages": {
+        "first": 7,
+        "last": 8
+      },
+      "Summary": "Covers key cases and constitutional balance well; linkage and concluding harmony remark clear.",
+      "HygieneSummary": "Handwriting neat with clear headings and spaced bullet points; some lines lightly underlined."
+    },
+    "Q5": {
+      "Score": "4.5",
+      "Comments": {
+        "Introduction": [
+          {
+            "comment": "Start with concise definition of India's quasi-federal character.",
+            "snippet": "India is the quasi-federal state. It is the unitary state with Federal features rather than Federal state with subsidiary unitary features. - K.C. Wheare.",
+            "page": 9,
+            "coordinates": [
+              95.21,
+              202.09,
+              505.82,
+              319.98
+            ]
+          }
+        ],
+        "Body": [
+          {
+            "comment": "Present recent government changes with clear points and relevance.",
+            "snippet": "Recent Changes introduced by Union Government in the domain of Centre-State relations: 1. Implementation of GST: The GST council transformed, tax allocation and revenue sharing -> increased financial autonomy of state. 2. Role of NITI Aayog: NITI Aayog replaced planning commission and facilitates cooperative federalism and collaborative decision making. 3. Amendment in All India civil services: The centre acquired more power to introduce - IAS, IPS & IFoS in states to implement their schemes. 4. Disaster Response fund: made SDRF & NDRF for state & centre respectively.",
+            "page": 9,
+            "coordinates": [
+              95.21,
+              353.66,
+              505.82,
+              724.15
+            ]
+          },
+          {
+            "comment": "List key issues constraining Centre-State relations with clarity.",
+            "snippet": "Issues Related to Centre-State relations 1. Entire dominance: The union list (97 subjects) has more power than state list (61 subjects). 2. Fiscal imbalances: The state relies on centre for Fund and centre specific schemes. -> decreases Financial autonomy of state. 3. The 15th finance commission recommendations: 4. Role of Governor: Accusations of 'political bias' obstruction against opposition-ruled states. Frequent use of President rule. 5. Misuse of Article 356: to dissolve the state government. The federal structure.",
+            "page": 10,
+            "coordinates": [
+              77.36,
+              67.36,
+              505.82,
+              454.7
+            ]
+          },
+          {
+            "comment": "Propose measures and 'way forward' aptly to build trust and federalism.",
+            "snippet": "Measures taken to build trust between centre and states and strengthen Federalism: 1. Financial autonomy to states, so that they can manage their democracy from the grassroot level. 2. Impartial role of Governor: to ensure that governor not showing bias towards ruling party. 3. Strengthening Inter-state council with regular meetings and enhance power to resolve state disputes. 4. Policy inclusivity: Consulting state governments in national policies. -> impacting consensus and state list -> ensures policy reflects regional needs. Way forward: 1. Sarkaria Commission recommendations - strengthening Inter state council, avoiding misuse of Article-356, equitable distribution of financial resources. 2. Punchhi Commission: ensuring state's consent for central legislations affecting states issues.",
+            "page": 11,
+            "coordinates": [
+              77.36,
+              505.22,
+              505.82,
+              724.15
+            ]
+          }
+        ],
+        "Conclusion": [
+          {
+            "comment": "Conclude by linking federalism as basic constitutional structure aptly.",
+            "snippet": "Federalism is the basic structure of the constitution; ensuring unity in diversity through cooperation and coordination. - S.R. Bommai Case.",
+            "page": 11,
+            "coordinates": [
+              95.21,
+              623.11,
+              505.82,
+              724.15
+            ]
+          }
+        ]
+      },
+      "Pages": {
+        "first": 9,
+        "last": 11
+      },
+      "Summary": "Comprehensive answer covering recent changes, issues, measures and concluding with federalism\u2019s constitutional stature.",
+      "HygieneSummary": "Handwriting legible; consistent structure and lists; good spatial organization and headings."
+    },
+    "Q7": {
+      "Score": "4.0",
+      "Comments": {
+        "Introduction": [
+          {
+            "comment": "Start with clear statement on preamble as philosophy and constitutional summary.",
+            "snippet": "Preamble is regarded as the preface to the constitution, it is the essence and summary of the whole constitution. It declares the basic values on which constitution is based.",
+            "page": 14,
+            "coordinates": [
+              95.21,
+              168.41,
+              505.82,
+              269.45
+            ]
+          }
+        ],
+        "Body": [
+          {
+            "comment": "Enumerate ideals and aspirations with examples clearly.",
+            "snippet": "The Preamble embodies the basic philosophy and fundamental values: 1. Preamble contains the aspirations and the ideals of the people of India. Ideals -> a. Sovereign: It means the country's government is totally independent in running its own affairs and keeping in mind the interests of the country. b. Secularism: means that state shall not recognize any specific religion as its official religion. c. Socialism: It is a commitment to social and economic equality -> nobody is completely left out from enjoying the benefits of growth. d. Democracy: Power of people through elected representation, where people are in command and it is a rule by people either directly or indirectly. e. Republicanism: The head of state is elected, not hereditary. Aspirations: 1. Justice: social, economic, and political. -> ensuring equality of treatment to all. 2. Liberty: of thought, expression, belief, faith and worship. 3. Equality: of status and opportunity -> ending discrimination. 4. Fraternity: ensuring the dignity of the individual and the unity and integrity of the Nation.",
+            "page": 14,
+            "coordinates": [
+              95.21,
+              303.13,
+              505.82,
+              488.38
+            ]
+          },
+          {
+            "comment": "Discuss judicial pronouncements on amendability adequately.",
+            "snippet": "Amendability of Preamble: 1. In Re Berubari Union case, 1960: held that preamble is not a part of constitution. 2. Keshavananda Bharati vs. State of Kerala (1973): The court overruled its previous decision and held that :- preamble is a part of constitution. 3. Indira Nehru Gandhi vs. Raj Narain (1975): emphasized that democracy, mentioned in the preamble, is a basic feature of the constitution. 4. Minerva Mills vs. Union of India (1980) 5. 42nd Constitutional Amendment, 1976: Amended Preamble and added the words 'Socialist', 'Secular', and 'Integrity' to the preamble of India.",
+            "page": 15,
+            "coordinates": [
+              77.36,
+              505.22,
+              505.82,
+              606.27
+            ]
+          }
+        ],
+        "Conclusion": [
+          {
+            "comment": "Summarize preamble as key to constitutional makers\u2019 intentions concisely.",
+            "snippet": "Preamble is the key to unlock the minds of the makers. It contains the philosophy and brings out the intentions that they had while drafting out various provisions of constitution.",
+            "page": 16,
+            "coordinates": [
+              95.21,
+              454.7,
+              505.82,
+              572.59
+            ]
+          }
+        ]
+      },
+      "Pages": {
+        "first": 14,
+        "last": 16
+      },
+      "Summary": "Well-organized answer with detailed ideals, aspirations and judicial decisions on amendability; minor structural clarity needed.",
+      "HygieneSummary": "Handwriting neat with proper indentation; well labelled sections; minor crowded text areas."
+    }
+  },
+  "OverallSummary": [
+    "Add clearer, concise introductions defining key concepts in answers.",
+    "Structure answers with distinct introduction, body with examples, and conclusion.",
+    "Include and explain judicial cases or commissions properly where relevant.",
+    "Strengthen conclusion by summarizing core relevance of the doctrine or concept.",
+    "Maintain consistent handwriting clarity, underline headings, and use proper margins.",
+    "Label and organize answers with subheadings or numbered points for better flow."
+  ]
+}

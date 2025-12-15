@@ -1,0 +1,28 @@
+FROM python:3.11-slim
+
+WORKDIR /app
+
+# Install CA certificates and OpenSSL for SSL connections
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ca-certificates \
+    openssl \
+    && rm -rf /var/lib/apt/lists/* \
+    && update-ca-certificates
+
+# Set SSL certificate environment variables
+ENV SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt
+ENV REQUESTS_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Update certifi certificates
+RUN pip install --upgrade certifi
+
+COPY . .
+
+# Create directories for temp, output, and log files
+RUN mkdir -p /app/tmp /app/output /app/logs && chmod 777 /app/logs
+
+CMD ["celery", "-A", "celery_app", "worker", "--loglevel=info"]
+

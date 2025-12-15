@@ -1,0 +1,77 @@
+{
+  "Questions": {
+    "Q1": {
+      "Score": "4.25",
+      "Sub-part Coverage": {
+        "A": "COVERED",
+        "B": "COVERED"
+      },
+      "Comments": {
+        "Introduction": [
+          {
+            "comment": "Clarify importance of continuous reform in civil services early on.",
+            "snippet": "Indian Civil Services are the \"Steel Frame\" of Indian democracy as stated by Lal Bahadur Shastriji. However, it is equally important that this frame keeps polishing itself with the changing and developing world.",
+            "page": 1,
+            "coordinates": [
+              100.94,
+              134.33,
+              493.5,
+              332.47
+            ]
+          }
+        ],
+        "Body": [
+          {
+            "comment": "Add explanation to each point for better coherence with examples.",
+            "snippet": "1) Changing commitments and need of citizens.\nEg. Digital literacy and infrastructure\n2) India's growing role in global platforms\nEg. International Solar Alliance",
+            "page": 1,
+            "coordinates": [
+              148.61,
+              483.87,
+              471.07,
+              698.83
+            ]
+          },
+          {
+            "comment": "Structure method points as part of body to improve flow and clarity.",
+            "snippet": "methods -> CPGRAMS.\nmethods -> Mid-Term Evaluatory Training\nmethods -> Voluntary Retirement for obsolete talent (Status quoists)\ncitizen charter -> AMRUT and Karmayogi Plan.\nNeGP 2.0 -> for citizen accessibility.",
+            "page": 2,
+            "coordinates": [
+              107.67,
+              442.75,
+              456.48,
+              625.93
+            ]
+          }
+        ],
+        "Conclusion": [
+          {
+            "comment": "Strengthen conclusion by linking reforms clearly to future vision.",
+            "snippet": "A Robust Civil servant ensures a spillover effect on all sectors under their control - Ensuring 'Viksit Bharat-2047'.",
+            "page": 2,
+            "coordinates": [
+              107.67,
+              652.1,
+              554.06,
+              723.13
+            ]
+          }
+        ]
+      },
+      "Pages": {
+        "first": 1,
+        "last": 2
+      },
+      "Summary": "Answer covers reasons and methods well with examples; lacks elaboration and smoother structure.",
+      "HygieneSummary": "Handwriting legible; minor structural lapses; no diagrams; lists moderately organized."
+    }
+  },
+  "OverallSummary": [
+    "Improve introductions with precise definitions and contextual framing.",
+    "Develop body points with clear explanations and linkages.",
+    "Structure methods and examples integrated within main discussion.",
+    "Conclude answers by summarizing insights and connecting to broader goals.",
+    "Maintain clear handwriting and consistent subheadings for better presentation.",
+    "Use labeled diagrams or tables where appropriate for visual clarity."
+  ]
+}

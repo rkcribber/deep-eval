@@ -1,0 +1,23 @@
+# Environment and secrets
+.env
+.env.*
+*.env
+# IDE
+.idea/
+.vscode/
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+# Large files
+*.pdf
+*.PDF
+# Output files
+output/
+logs/
+tmp/
+# OS files
+.DS_Store
+Thumbs.db

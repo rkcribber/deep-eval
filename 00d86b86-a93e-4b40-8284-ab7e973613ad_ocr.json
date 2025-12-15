@@ -1,0 +1,1399 @@
+{
+  "Pages": [
+    {
+      "Page_Number": 1,
+      "Underlines": [
+        {
+          "text": "political factors",
+          "coordinates": [
+            0.327,
+            0.14,
+            0.518,
+            0.14
+          ]
+        },
+        {
+          "text": "Article 356",
+          "coordinates": [
+            0.828,
+            0.14,
+            0.92,
+            0.14
+          ]
+        }
+      ],
+      "Blocks": [
+        {
+          "Block_Number": 1,
+          "Lines": [
+            {
+              "block_type": "LIST_ITEM",
+              "text": "1. Account for the legal and political factors responsible for the reduced frequency of using Article 356 by the Union Governments since mid-1990s. (2023) (Answer in 150 words) 10 M",
+              "Coordinates": [
+                0.096,
+                0.123,
+                0.92,
+                0.165
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "Page_Number": 2,
+      "Underlines": [],
+      "Blocks": []
+    },
+    {
+      "Page_Number": 3,
+      "Underlines": [
+        {
+          "text": "Constitutional morality",
+          "coordinates": [
+            0.166,
+            0.29,
+            0.493,
+            0.29
+          ]
+        },
+        {
+          "text": "Basic Structure",
+          "coordinates": [
+            0.316,
+            0.697,
+            0.565,
+            0.697
+          ]
+        }
+      ],
+      "Blocks": [
+        {
+          "Block_Number": 1,
+          "Lines": [
+            {
+              "block_type": "LIST_ITEM",
+              "text": "2. 'Constitutional Morality' is rooted in the Constitution itself and is founded on its essential facets. Explain the doctrine of 'Constitutional Morality' with the help of relevant judicial decisions. (2021) (Answer in 150 words) 10 M",
+              "Coordinates": [
+                0.096,
+                0.123,
+                0.92,
+                0.183
+              ]
+            }
+          ]
+        },
+        {
+          "Block_Number": 2,
+          "Lines": [
+            {
+              "block_type": "PARAGRAPH",
+              "text": "Constitutional morality refers to the adherence of the core value of constitution in the democracy, i.e., a moral obligation of an individual to uphold the constitutional values without any compromise and faith towards it.",
+              "Coordinates": [
+                0.166,
+                0.264,
+                0.898,
+                0.428
+              ]
+            }
+          ]
+        },
+        {
+          "Block_Number": 3,
+          "Lines": [
+            {
+              "block_type": "PARAGRAPH",
+              "text": "Significance of Constitutional Morality:",
+              "Coordinates": [
+                0.166,
+                0.457,
+                0.686,
+                0.476
+              ]
+            }
+          ]
+        },
+        {
+          "Block_Number": 4,
+          "Lines": [
+            {
+              "block_type": "LIST_ITEM",
+              "text": "1. Safeguard and protect the enforcement of Rule of law in the country.",
+              "Coordinates": [
+                0.166,
+                0.505,
+                0.781,
+                0.548
+              ]
+            },
+            {
+              "block_type": "LIST_ITEM",
+              "text": "2. Promote the democratic ideals of nation.",
+              "Coordinates": [
+                0.166,
+                0.566,
+                0.643,
+                0.585
+              ]
+            },
+            {
+              "block_type": "LIST_ITEM",
+              "text": "3. Bring progressive transformation in the society through democratic values.",
+              "Coordinates": [
+                0.166,
+                0.603,
+                0.812,
+                0.655
+              ]
+            },
+            {
+              "block_type": "LIST_ITEM",
+              "text": "4. Aid in Basic Structure doctrine.",
+              "Coordinates": [
+                0.166,
+                0.673,
+                0.613,
+                0.691
+              ]
+            },
+            {
+              "block_type": "LIST_ITEM",
+              "text": "5. Achieving the basic purpose of constitutionalism.",
+              "Coordinates": [
+                0.166,
+                0.729,
+                0.831,
+                0.748
+              ]
+            },
+            {
+              "block_type": "LIST_ITEM",
+              "text": "6. Uphold the harmonization principle, protect individual rights.",
+              "Coordinates": [
+                0.166,
+                0.786,
+                0.813,
+                0.838
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "Page_Number": 4,
+      "Underlines": [
+        {
+          "text": "Navtej Singh Johar",
+          "coordinates": [
+            0.12,
+            0.198,
+            0.463,
+            0.198
+          ]
+        },
+        {
+          "text": "Sabarimala temple",
+          "coordinates": [
+            0.56,
+            0.616,
+            0.815,
+            0.616
+          ]
+        }
+      ],
+      "Blocks": [
+        {
+          "Block_Number": 1,
+          "Lines": [
+            {
+              "block_type": "PARAGRAPH",
+              "text": "Landmark Judgments related to constitutional morality:",
+              "Coordinates": [
+                0.088,
+                0.123,
+                0.798,
+                0.165
+              ]
+            }
+          ]
+        },
+        {
+          "Block_Number": 2,
+          "Lines": [
+            {
+              "block_type": "LIST_ITEM",
+              "text": "1. Navtej Singh Johar vs. Union of India (2018): protects the right of LGBTQIA+, the court struck down IPC-377 and upheld constitutional morality over public morality.",
+              "Coordinates": [
+                0.088,
+                0.182,
+                0.898,
+                0.292
+              ]
+            },
+            {
+              "block_type": "LIST_ITEM",
+              "text": "2. Joseph Shine vs. Union of India (2019): The court upheld right to gender equality and Right to equality and struck down section 497 of IPC which made adultery a crime. Hence the court upheld the constitutional morality.",
+              "Coordinates": [
+                0.088,
+                0.31,
+                0.898,
+                0.476
+              ]
+            },
+            {
+              "block_type": "LIST_ITEM",
+              "text": "3. Government of NCT Delhi vs. Union of India: The court upheld constitutional morality as basic structure.",
+              "Coordinates": [
+                0.088,
+                0.494,
+                0.898,
+                0.563
+              ]
+            },
+            {
+              "block_type": "LIST_ITEM",
+              "text": "4. Indian Young Lawyers Association vs. State of Kerala (2018) - The exclusion of women in Sabarimala temple violates Article 14 (Equality), Liberty, Fraternity. - The court upheld constitutional morality.",
+              "Coordinates": [
+                0.088,
+                0.581,
+                0.898,
+                0.729
+              ]
+            }
+          ]
+        },
+        {
+          "Block_Number": 3,
+          "Lines": [
+            {
+              "blockType": "PARAGRAPH",
+              "text": "Constitutional morality is the basic essence of Constitution which upholds the constitution's aim, and adheres to both structure.",
+              "Coordinates": [
+                0.166,
+                0.767,
+                0.898,
+                0.877
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "Page_Number": 5,
+      "Underlines": [
+        {
+          "text": "Basic Structure",
+          "coordinates": [
+            0.283,
+            0.139,
+            0.518,
+            0.139
+          ]
+        },
+        {
+          "text": "Golak Nath",
+          "coordinates": [
+            0.12,
+            0.759,
+            0.302,
+            0.759
+          ]
+        }
+      ],
+      "Blocks": [
+        {
+          "Block_Number": 1,
+          "Lines": [
+            {
+              "block_type": "LIST_ITEM",
+              "text": "3. The Doctrine of Basic Structure in India has evolved to maturity through various judicial judgments. Examine. (Answer in 150 words) 10 M",
+              "Coordinates": [
+                0.136,
+                0.123,
+                0.898,
+                0.183
+              ]
+            }
+          ]
+        },
+        {
+          "BlockNumber": 2,
+          "Lines": [
+            {
+              "block_type": "PARAGRAPH",
+              "text": "The doctrine of basic structure refers to - if parliament passes any law which clashes with fundamental right and other basic features of constitution - then the law is declared invalid and void. The basic structure doctrine emerged in - Keshavananda Bharati case.",
+              "Coordinates": [
+                0.166,
+                0.221,
+                0.898,
+                0.389
+              ]
+            }
+          ]
+        },
+        {
+          "Block_Number": 3,
+          "Lines": [
+            {
+              "block_type": "PARAGRAPH",
+              "text": "Evolution of doctrine of Basic Structure",
+              "Coordinates": [
+                0.166,
+                0.418,
+                0.686,
+                0.437
+              ]
+            }
+          ]
+        },
+        {
+          "Block_Number": 4,
+          "Lines": [
+            {
+              "block_type": "LIST_ITEM",
+              "text": "1. Shankari Prasad vs. Union of India (1951): The court held that - Parliament can amend any part of the constitution including fundamental right. -> Led to - 1st constitutional amendment - inserted 9th schedule.",
+              "Coordinates": [
+                0.166,
+                0.466,
+                0.898,
+                0.585
+              ]
+            },
+            {
+              "block_type": "LIST_ITEM",
+              "text": "2. Sajjan Singh vs. State of Rajasthan (1965): Reaffirmed the Shankari Prasad case - parliament can amend any part of constitution under Article-368.",
+              "Coordinates": [
+                0.166,
+                0.603,
+                0.898,
+                0.691
+              ]
+            },
+            {
+              "block_type": "LIST_ITEM",
+              "text": "3. Golak Nath vs. State of Punjab (1967): The court contradicting its previous decision and ruled that parliament cannot amend any part of the constitution including fundamental right.",
+              "Coordinates": [
+                0.12,
+                0.709,
+                0.898,
+                0.838
+              ]
+            },
+            {
+              "block_type": "LIST_ITEM",
+              "text": "4. 24th constitutional amendment (1971): Parliament restored its authority to amend the constitution.",
+              "Coordinates": [
+                0.12,
+                0.856,
+                0.898,
+                0.916
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "Page_Number": 6,
+      "Underlines": [
+        {
+          "text": "Judicial review",
+          "coordinates": [
+            0.12,
+            0.282,
+            0.347,
+            0.282
+          ]
+        },
+        {
+          "text": "Minerva Mills",
+          "coordinates": [
+            0.12,
+            0.466,
+            0.347,
+            0.466
+          ]
+        }
+      ],
+      "Blocks": [
+        {
+          "Block_Number": 1,
+          "Lines": [
+            {
+              "block_type": "LIST_ITEM",
+              "text": "5. Keshavananda Bharati vs. State of Kerala (1973): -> The supreme court held that the parliament can amend any part of constitution but do not alter the basic structure of constitution. -> Judicial review - part of basic structure of constitution.",
+              "Coordinates": [
+                0.12,
+                0.123,
+                0.898,
+                0.337
+              ]
+            },
+            {
+              "block_type": "LIST_ITEM",
+              "text": "6. 42nd constitution amendment (1975): Parliament claimed unlimited amendment power and excluded judicial review.",
+              "Coordinates": [
+                0.12,
+                0.355,
+                0.898,
+                0.424
+              ]
+            },
+            {
+              "block_type": "LIST_ITEM",
+              "text": "7. Minerva Mills vs. Union of India (1980): The court invalidated the above provision limiting the power of parliament and upheld judicial review as integral part of basic structure of constitution.",
+              "Coordinates": [
+                0.12,
+                0.45,
+                0.898,
+                0.616
+              ]
+            },
+            {
+              "block_type": "LIST_ITEM",
+              "text": "8. S.R Bommai vs. Union of India (1994): Federalism, secularism, democracy as the basic structure of constitution.",
+              "Coordinates": [
+                0.12,
+                0.634,
+                0.898,
+                0.722
+              ]
+            }
+          ]
+        },
+        {
+          "Block_Number": 2,
+          "Lines": [
+            {
+              "block_type": "PARAGRAPH",
+              "text": "The doctrine of basic structure is not mentioned in the constitution but it is the formulation of judiciary to limit the arbitrariness of legislature and uphold the essence of constitutionalism.",
+              "Coordinates": [
+                0.166,
+                0.767,
+                0.898,
+                0.907
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "Page_Number": 7,
+      "Underlines": [
+        {
+          "text": "Directive Principles",
+          "coordinates": [
+            0.283,
+            0.139,
+            0.565,
+            0.139
+          ]
+        },
+        {
+          "text": "harmonization",
+          "coordinates": [
+            0.25,
+            0.803,
+            0.463,
+            0.803
+          ]
+        }
+      ],
+      "Blocks": [
+        {
+          "Block_Number": 1,
+          "Lines": [
+            {
+              "block_type": "LIST_ITEM",
+              "text": "4. Balancing Fundamental Rights with Directive Principles of State Policy has posed a continuing constitutional challenge in India. Analyze this with reference to key judicial interpretations. (Answer in 150 words) 10 M",
+              "Coordinates": [
+                0.136,
+                0.123,
+                0.92,
+                0.201
+              ]
+            }
+          ]
+        },
+        {
+          "Block_Number": 2,
+          "Lines": [
+            {
+              "block_type": "PARAGRAPH",
+              "text": "The objective of directive principles is to promote socio-economic welfare of well-being, while, fundamental right confers basic freedom but both are balancing the harmony. - Justice Chandrachud.",
+              "Coordinates": [
+                0.166,
+                0.273,
+                0.898,
+                0.437
+              ]
+            }
+          ]
+        },
+        {
+          "Block_Number": 3,
+          "Lines": [
+            {
+              "block_type": "PARAGRAPH",
+              "text": "The conflict between fundamental right and Directive principles - Judicial interpretation.",
+              "Coordinates": [
+                0.166,
+                0.466,
+                0.898,
+                0.526
+              ]
+            }
+          ]
+        },
+        {
+          "Block_Number": 4,
+          "Lines": [
+            {
+              "block_type": "LIST_ITEM",
+              "text": "1. Champakam Dorai Rajan vs. State of Madras (1951) - The law made to enforce the DPSP cannot be override fundamental right (FR). The law has to conform and be subsidiary to fundamental right. - If any conflict arises, then fundamental right prevails over other.",
+              "Coordinates": [
+                0.166,
+                0.555,
+                0.898,
+                0.767
+              ]
+            },
+            {
+              "block_type": "LIST_ITEM",
+              "text": "2. Re Kerala education bill (1957): Adopted the theory of harmonization. The Court held that in case of conflict between DPSP & FR - The court must try to incorporate both of them to the extent possible.",
+              "Coordinates": [
+                0.166,
+                0.785,
+                0.898,
+                0.925
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "Page_Number": 8,
+      "Underlines": [
+        {
+          "text": "Keshavananda Bharati",
+          "coordinates": [
+            0.12,
+            0.139,
+            0.518,
+            0.139
+          ]
+        },
+        {
+          "text": "Minerva Mill",
+          "coordinates": [
+            0.12,
+            0.484,
+            0.347,
+            0.484
+          ]
+        }
+      ],
+      "Blocks": [
+        {
+          "Block_Number": 1,
+          "Lines": [
+            {
+              "block_type": "LIST_ITEM",
+              "text": "3. Keshavananda Bharati vs. State of Kerala (1973): The court struck down the second provision of Article-31C and upheld that the law enacted to give effect Article - 39(b) & Article - 39(c) cannot be void.",
+              "Coordinates": [
+                0.12,
+                0.123,
+                0.898,
+                0.292
+              ]
+            },
+            {
+              "block_type": "LIST_ITEM",
+              "text": "4. 42nd constitution Amendment, 1976: Parliament expanded the scope of Article 31C and saved if any law made to give effect Art-39(b) and Article-39(c), then the law cannot be void if it violates Article-19 and 14.",
+              "Coordinates": [
+                0.12,
+                0.31,
+                0.898,
+                0.466
+              ]
+            },
+            {
+              "block_type": "LIST_ITEM",
+              "text": "5. Minerva Mill vs. Union of India (1980): The court struck down the extension of 31C and brought - Harmony & balance between DPSP and F.R. Harmony and balance between DPSP and Fundamental right is a basic feature of constitution. - Justice P.N. Bhagwati",
+              "Coordinates": [
+                0 astounding,
+                0.484,
+                0.898,
+                0.838
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "Page_Number": 9,
+      "Underlines": [
+        {
+          "text": "strengthening federalism",
+          "coordinates": [
+            0.136,
+            0.217,
+            0.418,
+            0.217
+          ]
+        },
+        {
+          "text": "NITI Aayog",
+          "coordinates": [
+            0.25,
+            0.634,
+            0.418,
+            0.634
+          ]
+        }
+      ],
+      "Blocks": [
+        {
+          "Block_Number": 1,
+          "Lines": [
+            {
+              "block_type": "LIST_ITEM",
+              "text": "5. What changes has the Union Government recently introduced in the domain of Centre-State relations? Suggest measures to be adopted to build the trust between the Centre and the States and for strengthening federalism. (2024) (Answer in 250 words) 15 M",
+              "Coordinates": [
+                0.136,
+                0.123,
+                0.92,
+                0.254
+              ]
+            }
+          ]
+        },
+        {
+          "Block_Number": 2,
+          "Lines": [
+            {
+              "block_type": "PARAGRAPH",
+              "text": "India is a quasi-federal state. It is a unitary state with federal features rather than a federal state with subsidiary unitary features. - K.C. Wheare.",
+              "Coordinates": [
+                0.166,
+                0.283,
+                0.898,
+                0.428
+              ]
+            }
+          ]
+        },
+        {
+          "Block_Number": 3,
+          "Lines": [
+            {
+              "block_type": "PARAGRAPH",
+              "text": "Recent changes introduced by Union Government in the domain of Centre-State relations:",
+              "Coordinates": [
+                0.166,
+                0.457,
+                0.898,
+                0.517
+              ]
+            }
+          ]
+        },
+        {
+          "Block_Number": 4,
+          "Lines": [
+            {
+              "block_type": "LIST_ITEM",
+              "text": "1. Implementation of GST: The GST council transformed tax allocation and revenue sharing -> increased financial autonomy of states.",
+              "Coordinates": [
+                0.166,
+                0.546,
+                0.898,
+                0.616
+              ]
+            },
+            {
+              "block_type": "LIST_ITEM",
+              "text": "2. Role of NITI Aayog: NITI Aayog replaced planning commission and is facilitating cooperative federalism and collaborative decision making.",
+              "Coordinates": [
+                0.25,
+                0.634,
+                0.898,
+                0.722
+              ]
+            },
+            {
+              "block_type": "LIST_ITEM",
+              "text": "3. All India civil services: The centre exercises more power to introduce - IAS, IPS & IFoS in states to implement their schemes.",
+              "Coordinates": [
+                0.166,
+                0.74,
+                0.898,
+                0.847
+              ]
+            },
+            {
+              "block_type": "LIST_ITEM",
+              "text": "4. Disaster Response fund: make SDRF & NDRF for state & centre respectively.",
+              "Coordinates": [
+                0.166,
+                0.865,
+                0.898,
+                0.916
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "Page_Number": 10,
+      "Underlines": [
+        {
+          "text": "Fiscal imbalances",
+          "coordinates": [
+            0.12,
+            0.23,
+            0.418,
+            0.23
+          ]
+        },
+        {
+          "text": "Role of Governor",
+          "coordinates": [
+            0.12,
+            0.457,
+            0.418,
+            0.457
+          ]
+        }
+      ],
+      "Blocks": [
+        {
+          "Block_Number": 1,
+          "Lines": [
+            {
+              "block_type": "PARAGRAPH",
+              "text": "Issues Related to Centre-State relations.",
+              "Coordinates": [
+                0.12,
+                0.123,
+                0.686,
+                0.142
+              ]
+            }
+          ]
+        },
+        {
+          "Block_Number": 2,
+          "Lines": [
+            {
+              "block_type": "LIST_ITEM",
+              "text": "1. Centre dominance: The union list (97 subjects) has more power than state list (61 subjects).",
+              "Coordinates": [
+                0.12,
+                0.171,
+                0.898,
+                0.212
+              ]
+            },
+            {
+              "block_type": "LIST_ITEM",
+              "text": "2. Fiscal imbalances: The state relies on Centre for fund and centre specific schemes. -> decreases financial autonomy of state.",
+              "Coordinates": [
+                0.12,
+                0.23,
+                0.898,
+                0.318
+              ]
+            },
+            {
+              "block_type": "LIST_ITEM",
+              "text": "3. The 15th finance commission recommendations: decreased the fiscal autonomy of state.",
+              "Coordinates": [
+                0.12,
+                0.336,
+                0.898,
+                0.415
+              ]
+            },
+            {
+              "block_type": "LIST_ITEM",
+              "text": "4. Role of Governor: Accusations of political bias and obstruction against opposition-ruled states.",
+              "Coordinates": [
+                0.12,
+                0.45,
+                0.898,
+                0.538
+              ]
+            },
+            {
+              "block_type": "LIST_ITEM",
+              "text": "5. Misuse of Article 356: Frequent use of President's rule.",
+              "Coordinates": [
+                0.12,
+                0.556,
+                0.898,
+                0.607
+              ]
+            }
+          ]
+        },
+        {
+          "Block_Number": 3,
+          "Lines": [
+            {
+              "block_type": "PARAGRAPH",
+              "text": "Measures taken to build trust between Centre and states and strengthen federalism.",
+              "Coordinates": [
+                0.12,
+                0.643,
+                0.898,
+                0.694
+              ]
+            }
+          ]
+        },
+        {
+          "Block_Number": 4,
+          "Lines": [
+            {
+              "block_type": "LIST_ITEM",
+              "text": "1. Financial autonomy to states, so that they can manage their democracy from grassroots level.",
+              "Coordinates": [
+                0.12,
+                0.729,
+                0.898,
+                0.817
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "Page_Number": 11,
+      "Underlines": [
+        {
+          "text": "Sarkaria commission",
+          "coordinates": [
+            0.12,
+            0.594,
+            0.463,
+            0.594
+          ]
+        },
+        {
+          "text": "Punchhi commission",
+          "coordinates": [
+            0.12,
+            0.709,
+            0.463,
+            0.709
+          ]
+        }
+      ],
+      "Blocks": [
+        {
+          "Block_Number": 1,
+          "Lines": [
+            {
+              "block_type": "LIST_ITEM",
+              "text": "2. Impartial role of Governor: to ensure that governor is not showing bias towards the ruling party.",
+              "Coordinates": [
+                0.12,
+                0.123,
+                0.898,
+                0.212
+              ]
+            },
+            {
+              "block_type": "LIST_ITEM",
+              "text": "3. Strengthen Inter-state council with regular meetings and enhance power to resolve state disputes.",
+              "Coordinates": [
+                0.12,
+                0.248,
+                0.898,
+                0.336
+              ]
+            },
+            {
+              "block_type": "LIST_ITEM",
+              "text": "4. Policy inclusivity: Consulting with states on policies. -> impacting federalism. ensuring policy reflects local needs.",
+              "Coordinates": [
+                0.12,
+                0.354,
+                0.898,
+                0.494
+              ]
+            }
+          ]
+        },
+        {
+          "Block_Number": 2,
+          "Lines": [
+            {
+              "block_type": "PARAGRAPH",
+              "text": "Way forward:",
+              "Coordinates": [
+                0.12,
+                0.53,
+                0.347,
+                0.549
+              ]
+            }
+          ]
+        },
+        {
+          "Block_Number": 3,
+          "Lines": [
+            {
+              "block_type": "LIST_ITEM",
+              "text": "1. Sarkaria commission recommendations - strengthening Inter-State council, avoiding misuse of Article-356, equitable distribution of financial resources.",
+              "Coordinates": [
+                0.12,
+                0.578,
+                0.898,
+                0.685
+              ]
+            },
+            {
+              "block_type": "LIST_ITEM",
+              "text": "2. Punchhi commission: Ensuring state's consent for central legislations affecting states' issues.",
+              "Coordinates": [
+                0.12,
+                0.703,
+                0.898,
+                0.772
+              ]
+            }
+          ]
+        },
+        {
+          "Block_Number": 4,
+          "Lines": [
+            {
+              "block_type": "PARAGRAPH",
+              "text": "Federalism is the basic structure of the constitution; ensuring unity in diversity through cooperation and coordination. - S.R. Bommai Case.",
+              "Coordinates": [
+                0.166,
+                0.808,
+                0.898,
+                0.916
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "Page_Number": 12,
+      "Underlines": [
+        {
+          "text": "empower urban",
+          "coordinates": [
+            0.463,
+            0.14,
+            0.655,
+            0.14
+          ]
+        },
+        {
+          "text": "local bodies",
+          "coordinates": [
+            0.663,
+            0.14,
+            0.804,
+            0.14
+          ]
+        }
+      ],
+      "Blocks": [
+        {
+          "Block_Number": 1,
+          "Lines": [
+            {
+              "block_type": "LIST_ITEM",
+              "text": "6. The states in India seem reluctant to empower urban local bodies both functionally as well as financially. Comment. (2023) (Answer in 250 words) 15 M",
+              "Coordinates": [
+                0.136,
+                0.123,
+                0.92,
+                0.183
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "Page_Number": 13,
+      "Underlines": [],
+      "Blocks": []
+    },
+    {
+      "Page_Number": 14,
+      "Underlines": [
+        {
+          "text": "basic philosophy",
+          "coordinates": [
+            0.463,
+            0.139,
+            0.686,
+            0.139
+          ]
+        },
+        {
+          "text": "Sovereignty",
+          "coordinates": [
+            0.208,
+            0.555,
+            0.379,
+            0.555
+          ]
+        }
+      ],
+      "Blocks": [
+        {
+          "Block_Number": 1,
+          "Lines": [
+            {
+              "block_type": "LIST_ITEM",
+              "text": "7. The preamble embodies the basic philosophy and fundamental values on which the Indian Constitution is based. Discuss. Can it be amended like any other provision of the Constitution? (Answer in 250 words) 15 M",
+              "Coordinates": [
+                0.136,
+                0.123,
+                0.92,
+                0.212
+              ]
+            }
+          ]
+        },
+        {
+          "Block_Number": 2,
+          "Lines": [
+            {
+              "block_type": "PARAGRAPH",
+              "text": "Preamble is regarded as the preface to the constitution, it is the essence and summary of the whole constitution. It declares the basic values on which constitution is based.",
+              "Coordinates": [
+                0.166,
+                0.264,
+                0.898,
+                0.389
+              ]
+            }
+          ]
+        },
+        {
+          "Block_Number": 3,
+          "Lines": [
+            {
+              "block_type": "PARAGRAPH",
+              "text": "The Preamble embodies the basic philosophy and fundamental values:",
+              "Coordinates": [
+                0.166,
+                0.418,
+                0.898,
+                0.454
+              ]
+            }
+          ]
+        },
+        {
+          "Block_Number": 4,
+          "Lines": [
+            {
+              "block_type": "LIST_ITEM",
+              "text": "1. Preamble contains the aspirations and the ideals of people of India.",
+              "Coordinates": [
+                0.166,
+                0.483,
+                0.898,
+                0.526
+              ]
+            }
+          ]
+        },
+        {
+          "Block_Number": 5,
+          "Lines": [
+            {
+              "block_type": "PARAGRAPH",
+              "text": "Ideas",
+              "Coordinates": [
+                0.166,
+                0.555,
+                0.25,
+                0.574
+              ]
+            }
+          ]
+        },
+        {
+          "Block_Number": 6,
+          "Lines": [
+            {
+              "block_type": "LIST_ITEM",
+              "text": "a. Sovereignty: It means country is totally independent in respect to its own government and keeping in mind the interest of country's decision making.",
+              "Coordinates": [
+                0.208,
+                0.555,
+                0.898,
+                0.685
+              ]
+            },
+            {
+              "block_type": "LIST_ITEM",
+              "text": "b. Secularism: It means that state shall not recognize any specific religion as its official religion.",
+              "Coordinates": [
+                0.208,
+                0.703,
+                0.898,
+                0.772
+              ]
+            },
+            {
+              "block_type": "LIST_ITEM",
+              "text": "c. Socialism: It is a commitment to social and economic equality -> nobody is completely left out from enjoying the benefits of growth.",
+              "Coordinates": [
+                0.208,
+                0.79,
+                0.898,
+                0.916
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "Page_Number": 15,
+      "Underlines": [
+        {
+          "text": "Republicanism",
+          "coordinates": [
+            0.12,
+            0.212,
+            0.379,
+            0.212
+          ]
+        },
+        {
+          "text": "Berubari Union case",
+          "coordinates": [
+            0.166,
+            0.856,
+            0.463,
+            0.856
+          ]
+        }
+      ],
+      "Blocks": [
+        {
+          "Block_Number": 1,
+          "Lines": [
+            {
+              "block_type": "LIST_ITEM",
+              "text": "d. Democracy: Power of people through elected representation, where people are in command and it is a rule by people either directly or indirectly.",
+              "Coordinates": [
+                0.12,
+                0.123,
+                0.898,
+                0.212
+              ]
+            },
+            {
+              "block_type": "LIST_ITEM",
+              "text": "e. Republicanism: head of state elected not hereditary.",
+              "Coordinates": [
+                0.12,
+                0.212,
+                0.898,
+                0.268
+              ]
+            }
+          ]
+        },
+        {
+          "Block_Number": 2,
+          "Lines": [
+            {
+              "block_type": "PARAGRAPH",
+              "text": "Aspirations.",
+              "Coordinates": [
+                0.12,
+                0.31,
+                0.347,
+                0.329
+              ]
+            }
+          ]
+        },
+        {
+          "Block_Number": 3,
+          "Lines": [
+            {
+              "block_type": "LIST_ITEM",
+              "text": "1. Justice: social, economic, and political. -> ensuring equality of treatment to all.",
+              "Coordinates": [
+                0.12,
+                0.372,
+                0.898,
+                0.451
+              ]
+            },
+            {
+              "block_type": "LIST_ITEM",
+              "text": "2. Liberty: of thought, expression, belief, faith and worship.",
+              "Coordinates": [
+                0.12,
+                0.487,
+                0.898,
+                0.566
+              ]
+            },
+            {
+              "block_type": "LIST_ITEM",
+              "text": "3. Equality: of status and opportunity -> ending discrimination.",
+              "Coordinates": [
+                0.12,
+                0.584,
+                0.898,
+                0.663
+              ]
+            },
+            {
+              "block_type": "LIST_ITEM",
+              "text": "4. Fraternity: ensuring dignity of individual and unity and integrity of the Nation.",
+              "Coordinates": [
+                0.12,
+                0.681,
+                0.898,
+                0.76
+              ]
+            }
+          ]
+        },
+        {
+          "Block_Number": 4,
+          "Lines": [
+            {
+              "block_type": "PARAGRAPH",
+              "text": "Amendability of Preamble:",
+              "Coordinates": [
+                0.12,
+                0.796,
+                0.518,
+                0.815
+              ]
+            }
+          ]
+        },
+        {
+          "Block_Number": 5,
+          "Lines": [
+            {
+              "block_type": "LIST_ITEM",
+              "text": "1. Re Berubari Union case, 1960: held that preamble is not a part of constitution.",
+              "Coordinates": [
+                0.12,
+                0.85,
+                0.898,
+                0.91
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "Page_Number": 16,
+      "Underlines": [
+        {
+          "text": "Indira Gandhi",
+          "coordinates": [
+            0.12,
+            0.248,
+            0.379,
+            0.248
+          ]
+        },
+        {
+          "text": "42nd constitutional amendment",
+          "coordinates": [
+            0.12,
+            0.487,
+            0.629,
+            0.487
+          ]
+        }
+      ],
+      "Blocks": [
+        {
+          "Block_Number": 1,
+          "Lines": [
+            {
+              "block_type": "LIST_ITEM",
+              "text": "2. Keshavananda Bharati vs. State of Kerala (1973): The court overruled its previous decision and held that :- preamble is a part of constitution.",
+              "Coordinates": [
+                0.12,
+                0.123,
+                0.898,
+                0.212
+              ]
+            },
+            {
+              "block_type": "LIST_ITEM",
+              "text": "3. Indira Gandhi vs. Raj Narain (1975): emphasized that democracy in preamble -> basic feature of constitution.",
+              "Coordinates": [
+                0.12,
+                0.248,
+                0.898,
+                0.354
+              ]
+            },
+            {
+              "block_type": "LIST_ITEM",
+              "text": "4. Minerva Mills vs. Union of India (1980): The preamble's value.",
+              "Coordinates": [
+                0.12,
+                0.39,
+                0.898,
+                0.446
+              ]
+            },
+            {
+              "block_type": "LIST_ITEM",
+              "text": "5. 42nd constitutional amendment, 1976: Amended Preamble and added \"Socialist\", \"Secular\" & 'Integrity' in preamble.",
+              "Coordinates": [
+                0.12,
+                0.482,
+                0.898,
+                0.592
+              ]
+            }
+          ]
+        },
+        {
+          "Block_Number": 2,
+          "Lines": [
+            {
+              "block_type": "PARAGRAPH",
+              "text": "Preamble is the philosophy of the constitution. It contains the key to understand the minds of the constitution makers and bring out the intentions that they had while charting out various provisions of constitution.",
+              "Coordinates": [
+                0.12,
+                0.637,
+                0.898,
+                0.859
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

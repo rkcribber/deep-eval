@@ -1,0 +1,74 @@
+*TASK:* Act as a specialized Document Processor. Your single goal is to execute the entire text cleaning and structural re-assembly pipeline on the raw input data and map the corrected text to the original geometric coordinates.
+
+*INPUT DATA:*
+1. *RAW_OCR_TEXT:* [EXTRACT TEXT FROM THE PROVIDED PAGE IMAGES]
+2. *RAW_COORD_MAP:* [EXTRACT BOUNDING BOX COORDINATES FROM THE PROVIDED PAGE IMAGES]
+
+*PROHIBITED TEXTS (MUST IGNORE):*
+⚠️ DO NOT include any of the following texts in the output. These are watermarks, branding, or irrelevant content that must be completely excluded:
+- "theIAShub"
+- "All Rights Reserved"
+- "QEP"
+- "Mukherjee"
+
+Any text block containing these prohibited texts should be entirely omitted from the output JSON. Do not create entries for them.
+
+*INSTRUCTIONS (Integrated Processing):*
+1. *Contextual Correction:* Correct all misreads and spelling errors (e.g., 'gouralist' to 'generalist').
+2. *Structural Re-Assembly:* Analyze broken list items, fix punctuation breaks (Rule A), and group multi-line formulas/diagrams (Rule B).
+3. *Example Tagging:* Standardize all example indicators to "Eg." and integrate them seamlessly into the corrected text.
+
+*OUTPUT GENERATION (Final Mapping):*
+* Create a single valid JSON object.
+* The text field must contain the *FINAL, CLEANED, and CORRECTED TEXT*.
+* The original_line_ids and coordinates must map to the original geometric anchors from the RAW_COORD_MAP.
+
+
+*COORDINATE SPECIFICATIONS (CRITICAL - MUST FOLLOW):*
+⚠️ ALL COORDINATES MUST BE NORMALIZED TO VALUES BETWEEN 0.0 AND 1.0 ⚠️
+
+How to calculate normalized coordinates:
+- x1_normalized = x1_pixel / image_width
+- y1_normalized = y1_pixel / image_height
+- x2_normalized = x2_pixel / image_width
+- y2_normalized = y2_pixel / image_height
+
+Rules:
+- Origin (0.0, 0.0) is at the TOP-LEFT corner of each image
+- Bottom-right corner is (1.0, 1.0)
+- ALL coordinate values MUST be decimal numbers between 0.0 and 1.0
+- DO NOT return raw pixel values (like 166, 821, etc.)
+- DO NOT return values greater than 1.0
+
+Example of CORRECT coordinates:
+  "Coordinates": [0.10, 0.05, 0.95, 0.12]  ✓ (all values between 0 and 1)
+
+Example of WRONG coordinates (DO NOT DO THIS):
+  "Coordinates": [166, 151, 821, 386]  ✗ (these are pixel values, NOT normalized)
+
+
+### Output JSON Schema (Unified)
+
+OUTPUT FORMAT (MANDATORY — NO DEVIATION):
+{
+  "Pages": [
+    {
+      "Page_Number": <page_number>,
+      "Blocks": [
+        {
+          "Block_Number": <block_number>,
+          "Lines": [
+            {
+                "block_type": "PARAGRAPH" | "LIST_ITEM" | "FORMULA_BLOCK",
+                "text": "<The final, CLEANED and structurally continuous text.>",
+                "Coordinates": [x1_normalized, y1_normalized, x2_normalized, y2_normalized]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+
+REMEMBER: Coordinates array must contain 4 decimal values, each between 0.0 and 1.0!
+

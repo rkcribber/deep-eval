@@ -1,0 +1,51 @@
+{
+    "accepted": {
+        "status": "accepted",
+        "task_id": "uuid-string",
+        "message": "Task queued for processing",
+        "status_url": "/api/status/{task_id}"
+    },
+    "success": {
+        "status": "success",
+        "task_id": "uuid-string",
+        "state": "SUCCESS",
+        "progress": 100,
+        "result": {
+            "status": "completed",
+            "task_id": "uuid-string",
+            "annotated_pdf_path": "/app/output/{task_id}_annotated.pdf",
+            "ocr_output_path": "/app/output/{task_id}_ocr.json",
+            "evaluation_output_path": "/app/output/{task_id}_evaluation.json",
+            "pages_processed": 5,
+            "validation_errors": []
+        }
+    },
+    "pending": {
+        "status": "pending",
+        "task_id": "uuid-string",
+        "state": "PENDING",
+        "message": "Task is waiting in queue"
+    },
+    "processing": {
+        "status": "processing",
+        "task_id": "uuid-string",
+        "state": "PROCESSING",
+        "progress": 45,
+        "step": "ocr_completed"
+    },
+    "not_found": {
+        "status": "not_found",
+        "task_id": "uuid-string",
+        "message": "Task not found. It may have never existed or has expired."
+    },
+    "error": {
+        "status": "error",
+        "message": "Error details here",
+        "result": {
+            "status": "failed",
+            "task_id": "uuid-string",
+            "error": "Detailed error message"
+        }
+    }
+}
+

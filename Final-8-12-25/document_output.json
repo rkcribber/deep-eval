@@ -1,0 +1,284 @@
+{
+  "Pages": [
+    {
+      "Page_Number": 1,
+      "Blocks": [
+        {
+          "Block_Number": 1,
+          "Lines": [
+            {
+              "block_type": "PARAGRAPH",
+              "text": "Q1) Indian Civil Services are the \"Steel Frame\" of Indian democracy as stated by Lal Bahadur Shastriji. However, it is equally important that this frame keeps polishing itself with the changing and developing world.",
+              "Coordinates": [
+                100.94,
+                134.33,
+                493.5,
+                332.47
+              ],
+              "Coordinates_Normalized": [
+                0.16981132075471697,
+                0.16,
+                0.8301886792452831,
+                0.39555555555555555
+              ]
+            }
+          ]
+        },
+        {
+          "Block_Number": 2,
+          "Lines": [
+            {
+              "block_type": "PARAGRAPH",
+              "text": "Focused investment in \"reinventing and revitalizing\" Indian Civil Services is essential. Why necessary?",
+              "Coordinates": [
+                111.04,
+                353.03,
+                465.46,
+                463.31
+              ],
+              "Coordinates_Normalized": [
+                0.1867924528301887,
+                0.42,
+                0.7830188679245284,
+                0.5511111111111111
+              ]
+            }
+          ]
+        },
+        {
+          "Block_Number": 3,
+          "Lines": [
+            {
+              "block_type": "LIST_ITEM",
+              "text": "1) Changing commitments and need of citizens.",
+              "Coordinates": [
+                148.61,
+                483.87,
+                395.92,
+                534.34
+              ],
+              "Coordinates_Normalized": [
+                0.25,
+                0.5755555555555556,
+                0.6660377358490566,
+                0.6355555555555555
+              ]
+            },
+            {
+              "block_type": "LIST_ITEM",
+              "text": "Eg. Digital literacy and infrastructure",
+              "Coordinates": [
+                173.85,
+                545.56,
+                500.23,
+                584.81
+              ],
+              "Coordinates_Normalized": [
+                0.29245283018867924,
+                0.6488888888888888,
+                0.8415094339622641,
+                0.6955555555555556
+              ]
+            },
+            {
+              "block_type": "LIST_ITEM",
+              "text": "2) India's growing role in global platforms",
+              "Coordinates": [
+                126.74,
+                599.76,
+                473.31,
+                648.36
+              ],
+              "Coordinates_Normalized": [
+                0.2132075471698113,
+                0.7133333333333334,
+                0.7962264150943396,
+                0.7711111111111111
+              ]
+            },
+            {
+              "block_type": "LIST_ITEM",
+              "text": "Eg. International Solar Alliance",
+              "Coordinates": [
+                172.72,
+                659.58,
+                471.07,
+                698.83
+              ],
+              "Coordinates_Normalized": [
+                0.29056603773584905,
+                0.7844444444444445,
+                0.7924528301886793,
+                0.8311111111111111
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "Page_Number": 2,
+      "Blocks": [
+        {
+          "Block_Number": 1,
+          "Lines": [
+            {
+              "block_type": "LIST_ITEM",
+              "text": "3) Developing expectations of people and critique -> Civil Service to more 'King's arena' {work > status quoist}",
+              "Coordinates": [
+                109.92,
+                153.03,
+                512.56,
+                224.06
+              ],
+              "Coordinates_Normalized": [
+                0.1849056603773585,
+                0.18222222222222223,
+                0.8622641509433963,
+                0.26666666666666666
+              ]
+            },
+            {
+              "block_type": "LIST_ITEM",
+              "text": "4) Finding the loss in robustness of certain areas' administration -> vitality and reviews of operations",
+              "Coordinates": [
+                109.92,
+                235.27,
+                510.32,
+                306.3
+              ],
+              "Coordinates_Normalized": [
+                0.1849056603773585,
+                0.28,
+                0.8584905660377359,
+                0.36444444444444446
+              ]
+            },
+            {
+              "block_type": "LIST_ITEM",
+              "text": "5) Categorising and extra catering to multiple demands -> with social media in place; the focus on servants are more.",
+              "Coordinates": [
+                109.92,
+                319.38,
+                491.25,
+                416.58
+              ],
+              "Coordinates_Normalized": [
+                0.1849056603773585,
+                0.38,
+                0.8264150943396226,
+                0.4955555555555555
+              ]
+            }
+          ]
+        },
+        {
+          "Block_Number": 2,
+          "Lines": [
+            {
+              "block_type": "FORMULA_BLOCK",
+              "text": "methods -> CPGRAMS.",
+              "Coordinates": [
+                107.67,
+                442.75,
+                308.44,
+                463.31
+              ],
+              "Coordinates_Normalized": [
+                0.18113207547169813,
+                0.5266666666666666,
+                0.5188679245283019,
+                0.5511111111111111
+              ]
+            },
+            {
+              "block_type": "FORMULA_BLOCK",
+              "text": "methods -> Mid-Term Evaluatory Training",
+              "Coordinates": [
+                107.67,
+                470.79,
+                493.5,
+                491.35
+              ],
+              "Coordinates_Normalized": [
+                0.18113207547169813,
+                0.56,
+                0.8301886792452831,
+                0.5844444444444444
+              ]
+            },
+            {
+              "block_type": "FORMULA_BLOCK",
+              "text": "methods -> Voluntary Retirement for obsolete talent (Status quoists)",
+              "Coordinates": [
+                107.67,
+                498.83,
+                545.09,
+                545.56
+              ],
+              "Coordinates_Normalized": [
+                0.18113207547169813,
+                0.5933333333333333,
+                0.9169811320754717,
+                0.6488888888888888
+              ]
+            },
+            {
+              "block_type": "FORMULA_BLOCK",
+              "text": "citizen charter -> AMRUT and Karmayogi Plan.",
+              "Coordinates": [
+                107.67,
+                551.16,
+                465.46,
+                596.02
+              ],
+              "Coordinates_Normalized": [
+                0.18113207547169813,
+                0.6555555555555556,
+                0.7830188679245284,
+                0.7088888888888889
+              ]
+            },
+            {
+              "block_type": "FORMULA_BLOCK",
+              "text": "NeGP 2.0 -> for citizen accessibility.",
+              "Coordinates": [
+                107.67,
+                605.37,
+                456.48,
+                625.93
+              ],
+              "Coordinates_Normalized": [
+                0.18113207547169813,
+                0.72,
+                0.7679245283018868,
+                0.7444444444444445
+              ]
+            }
+          ]
+        },
+        {
+          "Block_Number": 3,
+          "Lines": [
+            {
+              "block_type": "PARAGRAPH",
+              "text": "A Robust Civil servant ensures a spillover effect on all sectors under their control - Ensuring 'Viksit Bharat-2047'.",
+              "Coordinates": [
+                107.67,
+                652.1,
+                554.06,
+                723.13
+              ],
+              "Coordinates_Normalized": [
+                0.18113207547169813,
+                0.7755555555555556,
+                0.9320754716981132,
+                0.86
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

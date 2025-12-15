@@ -1,0 +1,113 @@
+*TASK:* Act as a specialized Document Processor. Your goals are:
+1. Execute the entire text cleaning and structural re-assembly pipeline on the raw input data and map the corrected text to the original geometric coordinates.
+2. For EACH PAGE, randomly select 2 distinct words/phrases and provide their coordinates for underlining.
+
+*INPUT DATA:*
+1. *RAW_OCR_TEXT:* [EXTRACT TEXT FROM THE PROVIDED PAGE IMAGES]
+2. *RAW_COORD_MAP:* [EXTRACT BOUNDING BOX COORDINATES FROM THE PROVIDED PAGE IMAGES]
+
+*PROHIBITED TEXTS (MUST IGNORE):*
+⚠️ DO NOT include any of the following texts in the output. These are watermarks, branding, or irrelevant content that must be completely excluded:
+- "theIAShub"
+- "All Rights Reserved"
+- "QEP"
+- "Mukherjee"
+
+Any text block containing these prohibited texts should be entirely omitted from the output JSON. Do not create entries for them.
+
+*INSTRUCTIONS (Integrated Processing):*
+1. *Contextual Correction:* Correct all misreads and spelling errors (e.g., 'gouralist' to 'generalist').
+2. *Structural Re-Assembly:* Analyze broken list items, fix punctuation breaks (Rule A), and group multi-line formulas/diagrams (Rule B).
+3. *Example Tagging:* Standardize all example indicators to "Eg." and integrate them seamlessly into the corrected text.
+
+*UNDERLINE SELECTION (NEW - REQUIRED):*
+For EACH page in the document:
+- Select exactly 2 random words or short phrases (2-4 words) from the page content
+- These should be meaningful words (nouns, verbs, key terms) - NOT articles, prepositions, or watermarks
+- Provide the precise coordinates for drawing a RED underline beneath these words
+- The underline coordinates should be: [x1_start, y_bottom, x2_end, y_bottom] where y_bottom is just below the text baseline
+
+*OUTPUT GENERATION (Final Mapping):*
+* Create a single valid JSON object.
+* The text field must contain the *FINAL, CLEANED, and CORRECTED TEXT*.
+* The original_line_ids and coordinates must map to the original geometric anchors from the RAW_COORD_MAP.
+
+
+*COORDINATE SPECIFICATIONS (CRITICAL - MUST FOLLOW):*
+⚠️ ALL COORDINATES MUST BE NORMALIZED TO VALUES BETWEEN 0.0 AND 1.0 ⚠️
+
+How to calculate normalized coordinates:
+- x1_normalized = x1_pixel / image_width
+- y1_normalized = y1_pixel / image_height
+- x2_normalized = x2_pixel / image_width
+- y2_normalized = y2_pixel / image_height
+
+Rules:
+- Origin (0.0, 0.0) is at the TOP-LEFT corner of each image
+- Bottom-right corner is (1.0, 1.0)
+- ALL coordinate values MUST be decimal numbers between 0.0 and 1.0
+- DO NOT return raw pixel values (like 166, 821, etc.)
+- DO NOT return values greater than 1.0
+
+⚠️ CRITICAL JSON FORMAT RULES - COORDINATES MUST BE PURE NUMBERS ONLY ⚠️
+- Coordinates array MUST contain ONLY numeric values (decimals like 0.123)
+- NEVER include words, text, or descriptions inside coordinate arrays
+- NEVER mix numbers with words like "0 astounding" or "0.5 remarkable"
+- Each coordinate value must be a standalone decimal number
+
+Example of CORRECT coordinates:
+  "Coordinates": [0.10, 0.05, 0.95, 0.12]  ✓ (all values are pure decimal numbers)
+
+Examples of WRONG coordinates (NEVER DO THIS):
+  "Coordinates": [166, 151, 821, 386]  ✗ (pixel values, not normalized)
+  "Coordinates": [0 astounding, 0.5, 0.9, 0.12]  ✗ (INVALID - contains word "astounding")
+  "Coordinates": [0.1 great, 0.2, 0.8, 0.9]  ✗ (INVALID - contains word "great")
+  "Coordinates": ["0.1", "0.2", "0.8", "0.9"]  ✗ (INVALID - strings instead of numbers)
+
+
+### Output JSON Schema (Unified)
+
+OUTPUT FORMAT (MANDATORY — NO DEVIATION):
+{
+  "Pages": [
+    {
+      "Page_Number": <page_number>,
+      "Underlines": [
+        {
+          "text": "<the word or phrase to underline>",
+          "coordinates": [x1_start, y_bottom, x2_end, y_bottom]
+        },
+        {
+          "text": "<second word or phrase to underline>",
+          "coordinates": [x1_start, y_bottom, x2_end, y_bottom]
+        }
+      ],
+      "Blocks": [
+        {
+          "Block_Number": <block_number>,
+          "Lines": [
+            {
+                "block_type": "PARAGRAPH" | "LIST_ITEM" | "FORMULA_BLOCK",
+                "text": "<The final, CLEANED and structurally continuous text.>",
+                "Coordinates": [x1_normalized, y1_normalized, x2_normalized, y2_normalized]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+
+IMPORTANT FOR UNDERLINES:
+- Each page MUST have exactly 2 entries in the "Underlines" array
+- The coordinates for underlines are [x1_start, y_bottom, x2_end, y_bottom] - a horizontal line
+- y_bottom should be slightly below the text (add ~0.01 to the text's y2 coordinate)
+- These are for drawing RED horizontal lines under the selected words
+
+⚠️ FINAL REMINDER - VALID JSON OUTPUT REQUIRED ⚠️
+- All coordinate values must be PURE DECIMAL NUMBERS between 0.0 and 1.0
+- NEVER insert words, adjectives, or any text inside coordinate arrays
+- Example: [0.12, 0.45, 0.89, 0.52] ✓ CORRECT
+- Example: [0 astounding, 0.45, 0.89, 0.52] ✗ WRONG - will break JSON parsing
+- The output must be valid, parseable JSON with no syntax errors
+
