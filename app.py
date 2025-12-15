@@ -70,6 +70,50 @@ def submit_task():
 
     return jsonify(response), 202  # 202 Accepted
 
+@app.route('/api/process', methods=['POST'])
+def process_json():
+    """
+    Accept JSON payload for custom processing.
+
+    Request body:
+        - JSON object (structure TBD)
+
+    Returns:
+        - task_id: Use this to check status at /api/status/<task_id>
+        - status_url: Direct URL to check task status
+    """
+    # Validate JSON request
+    if not request.is_json:
+        return jsonify({
+            'status': 'error',
+            'message': 'Request must be JSON'
+        }), 400
+
+    data = request.get_json()
+
+    # TODO: Add validation for required fields
+    # if 'required_field' not in data:
+    #     return jsonify({'status': 'error', 'message': 'Missing required field'}), 400
+
+    # TODO: Add processing logic here
+    # For now, just echo back the received data
+
+    # Option 1: Sync response (for quick processing)
+    result = {
+        'status': 'success',
+        'message': 'JSON received successfully',
+        'received_data': data
+    }
+    return jsonify(result), 200
+
+    # Option 2: Async processing (uncomment when ready)
+    # task = your_processing_task.delay(data)
+    # return jsonify({
+    #     'status': 'accepted',
+    #     'task_id': task.id,
+    #     'status_url': f"/api/status/{task.id}"
+    # }), 202
+
 
 @app.route('/api/status/<task_id>', methods=['GET'])
 def get_task_status(task_id):
