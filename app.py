@@ -12,12 +12,20 @@ Architecture:
 
 import json
 import os
+import logging
 from flask import Flask, request, jsonify, url_for
 from tasks import process_data_task
 from celery.result import AsyncResult
 from celery_app import celery
 import redis
 from config import REDIS_URL
+
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
 
@@ -90,23 +98,29 @@ def process_json():
         - output_path: Path to the annotated PDF
         - message: Status message
     """
+    logger.info("[/api/process] Received request")
+
     # Validate JSON request
     if not request.is_json:
+        logger.warning("[/api/process] Request is not JSON")
         return jsonify({
             'status': 'error',
             'message': 'Request must be JSON'
         }), 400
 
     data = request.get_json()
+    logger.info("[/api/process] Request data received, validating fields...")
 
     # Validate required fields
     if 'pdf_url' not in data:
+        logger.warning("[/api/process] Missing required field: pdf_url")
         return jsonify({
             'status': 'error',
             'message': 'Missing required field: pdf_url'
         }), 400
 
     if 'annotations' not in data:
+        logger.warning("[/api/process] Missing required field: annotations")
         return jsonify({
             'status': 'error',
             'message': 'Missing required field: annotations'
@@ -116,9 +130,14 @@ def process_json():
     annotations = data['annotations']
     add_margin = data.get('add_margin', True)
 
+    logger.info("[/api/process] PDF URL: %s", pdf_url)
+    logger.info("[/api/process] Number of pages with annotations: %d", len(annotations))
+    logger.info("[/api/process] Add margin: %s", add_margin)
+
     # Import and run the PDF annotator
     from processing.pdf_annotator import process_pdf_with_annotations
 
+    logger.info("[/api/process] Starting PDF annotation process...")
     result = process_pdf_with_annotations(
         pdf_url=pdf_url,
         annotations=annotations,
@@ -126,8 +145,11 @@ def process_json():
     )
 
     if result['status'] == 'success':
+        logger.info("[/api/process] PDF annotation completed successfully. Job ID: %s", result.get('job_id'))
+        logger.info("[/api/process] Output path: %s", result.get('output_path'))
         return jsonify(result), 200
     else:
+        logger.error("[/api/process] PDF annotation failed: %s", result.get('message'))
         return jsonify(result), 500
 
 

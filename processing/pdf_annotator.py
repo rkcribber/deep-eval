@@ -9,9 +9,13 @@ Uses Patrick Hand font for handwriting-style annotations.
 import os
 import uuid
 import random
+import logging
 import fitz  # PyMuPDF
 import requests
 import urllib.request
+
+# Get logger for this module
+logger = logging.getLogger(__name__)
 
 # Font configuration
 FONT_SIZE_OVERRIDE = 16
@@ -25,19 +29,19 @@ def get_patrick_hand_font():
     font_path = os.path.join(font_dir, "PatrickHand-Regular.ttf")
 
     if not os.path.exists(font_path):
-        print(f"Downloading Patrick Hand font...")
+        logger.info("[pdf_annotator] Downloading Patrick Hand font...")
         try:
             urllib.request.urlretrieve(FONT_URL, font_path)
-            print(f"Font downloaded to: {font_path}")
+            logger.info("[pdf_annotator] Font downloaded to: %s", font_path)
         except Exception as e:
-            print(f"Failed to download font: {e}")
+            logger.error("[pdf_annotator] Failed to download font: %s", e)
             return None
 
     try:
         font = fitz.Font(fontfile=font_path)
         return font
     except Exception as e:
-        print(f"Failed to load font: {e}")
+        logger.error("[pdf_annotator] Failed to load font: %s", e)
         return None
 
 
@@ -302,7 +306,7 @@ def add_annotations_to_pdf(pdf_path: str, annotations: dict, output_path: str, a
         page_num = int(page_num_str) - 1  # Convert to 0-based index
 
         if page_num < 0 or page_num >= len(doc):
-            print(f"Warning: Page {page_num_str} out of range, skipping")
+            logger.warning("[pdf_annotator] Page %s out of range, skipping", page_num_str)
             continue
 
         page = doc[page_num]
@@ -318,6 +322,9 @@ def add_annotations_to_pdf(pdf_path: str, annotations: dict, output_path: str, a
             ann_type = ann.get("type", "text")  # "text" or "score"
             radius = ann.get("radius", 20)  # For score circles
 
+            logger.debug("[pdf_annotator] Page %s - Annotation type: %s, x: %s, y: %s",
+                        page_num_str, ann_type, x, y)
+
             # Get RGB color
             rgb = hex_to_rgb(color)
 
@@ -329,16 +336,24 @@ def add_annotations_to_pdf(pdf_path: str, annotations: dict, output_path: str, a
 
                 # Check if this is a summary annotation (place in bottom margin)
                 if ann_type == "summary":
-                    # Get page dimensions
+                    # Get page dimensions (page already has margins added)
                     page_rect = page.rect
-                    # Calculate bottom margin area (1 inch = 72 points from bottom)
-                    # Original page height before margin was added
-                    original_height = page_rect.height - 72  # 1 inch bottom margin
+                    # Bottom margin is 1 inch = 72 points
+                    # The original content ends at (page_height - bottom_margin)
+                    # We want to place summary in the bottom margin area
+                    bottom_margin_pts = 72  # 1 inch
 
-                    # Place summary in the bottom margin area
-                    summary_y = original_height + 20  # 20 points below original content
+                    # Summary should start in the bottom margin area
+                    # Original content area ends at: page_height - bottom_margin_pts
+                    original_content_end = page_rect.height - bottom_margin_pts
+
+                    # Place summary 15 points into the bottom margin
+                    summary_y = original_content_end + 15
                     summary_x = 50  # Left padding
                     summary_width = page_rect.width - 100  # Leave some padding on both sides
+
+                    logger.debug("[pdf_annotator] Page %s - Summary placement: x=%s, y=%s, page_height=%s",
+                                page_num_str, summary_x, summary_y, page_rect.height)
 
                     # Create text writer for summary
                     tw = fitz.TextWriter(page_rect)
@@ -394,6 +409,10 @@ def add_annotations_to_pdf(pdf_path: str, annotations: dict, output_path: str, a
                 # Create a text writer
                 tw = fitz.TextWriter(page.rect)
 
+                # Apply 0.3 inch (22 points) left offset for text in right margin
+                x_offset = 22  # 0.3 inch = 0.3 * 72 ≈ 22 points
+                adjusted_x = x - x_offset
+
                 # Calculate characters per line for word wrapping
                 char_width = font_size * 0.55
                 chars_per_line = int(width / char_width)
@@ -425,14 +444,14 @@ def add_annotations_to_pdf(pdf_path: str, annotations: dict, output_path: str, a
 
                     if patrick_hand_font:
                         tw.append(
-                            (x, current_y),
+                            (adjusted_x, current_y),
                             line,
                             fontsize=font_size,
                             font=patrick_hand_font,
                         )
                     else:
                         tw.append(
-                            (x, current_y),
+                            (adjusted_x, current_y),
                             line,
                             fontsize=font_size,
                         )
@@ -443,7 +462,7 @@ def add_annotations_to_pdf(pdf_path: str, annotations: dict, output_path: str, a
                 tw.write_text(page, color=rgb)
 
             except Exception as e:
-                print(f"Error adding annotation on page {page_num_str}: {e}")
+                logger.error("[pdf_annotator] Error adding annotation on page %s: %s", page_num_str, e)
                 # Fallback: use insert_text
                 try:
                     page.insert_text(
@@ -453,7 +472,7 @@ def add_annotations_to_pdf(pdf_path: str, annotations: dict, output_path: str, a
                         color=rgb,
                     )
                 except Exception as e2:
-                    print(f"Fallback also failed: {e2}")
+                    logger.error("[pdf_annotator] Fallback also failed: %s", e2)
 
     # Save the annotated PDF
     doc.save(output_path)
@@ -483,23 +502,26 @@ def process_pdf_with_annotations(pdf_url: str, annotations: dict, output_dir: st
     try:
         # Generate unique ID for this job
         job_id = str(uuid.uuid4())
+        logger.info("[pdf_annotator] Job ID: %s", job_id)
 
         # Download the PDF
-        print(f"Downloading PDF from: {pdf_url}")
+        logger.info("[pdf_annotator] Downloading PDF from: %s", pdf_url)
         input_pdf_path = download_pdf(pdf_url, output_dir)
-        print(f"PDF downloaded to: {input_pdf_path}")
+        logger.info("[pdf_annotator] PDF downloaded to: %s", input_pdf_path)
 
         # Generate output path
         output_pdf_path = os.path.join(output_dir, f"{job_id}_annotated.pdf")
 
         # Add annotations
-        print(f"Adding annotations to PDF...")
+        logger.info("[pdf_annotator] Adding annotations to PDF...")
+        logger.info("[pdf_annotator] Number of pages with annotations: %d", len(annotations))
         add_annotations_to_pdf(input_pdf_path, annotations, output_pdf_path, add_margin)
-        print(f"Annotated PDF saved to: {output_pdf_path}")
+        logger.info("[pdf_annotator] Annotated PDF saved to: %s", output_pdf_path)
 
         # Clean up input file
         try:
             os.remove(input_pdf_path)
+            logger.debug("[pdf_annotator] Cleaned up input file")
         except:
             pass
 
@@ -511,11 +533,13 @@ def process_pdf_with_annotations(pdf_url: str, annotations: dict, output_dir: st
         }
 
     except requests.exceptions.RequestException as e:
+        logger.error("[pdf_annotator] Failed to download PDF: %s", str(e))
         return {
             'status': 'error',
             'message': f'Failed to download PDF: {str(e)}'
         }
     except Exception as e:
+        logger.error("[pdf_annotator] Failed to process PDF: %s", str(e))
         return {
             'status': 'error',
             'message': f'Failed to process PDF: {str(e)}'
