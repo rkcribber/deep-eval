@@ -2,12 +2,11 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
-# Update SSL certificates and pip
+# Update SSL certificates
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates \
     && rm -rf /var/lib/apt/lists/* \
-    && update-ca-certificates \
-    && pip install --upgrade pip
+    && update-ca-certificates
 
 COPY requirements.txt .
 RUN pip install --no-cache-dir --retries 5 --timeout 60 -r requirements.txt

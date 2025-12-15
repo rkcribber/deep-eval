@@ -73,14 +73,22 @@ def submit_task():
 @app.route('/api/process', methods=['POST'])
 def process_json():
     """
-    Accept JSON payload for custom processing.
+    Add annotations to a PDF.
 
     Request body:
-        - JSON object (structure TBD)
+        - pdf_url (required): URL of the PDF to annotate
+        - annotations (required): Dictionary with page numbers as keys and list of annotations as values
+          Format: {
+              "1": [{"x": 450, "y": 100, "text": "Comment", "color": "red", "width": 200, "height": 100}],
+              "2": [...]
+          }
+        - add_margin (optional): Whether to add 2.5 inch right margin (default: true)
 
     Returns:
-        - task_id: Use this to check status at /api/status/<task_id>
-        - status_url: Direct URL to check task status
+        - status: success/error
+        - job_id: Unique identifier for this job
+        - output_path: Path to the annotated PDF
+        - message: Status message
     """
     # Validate JSON request
     if not request.is_json:
@@ -91,28 +99,36 @@ def process_json():
 
     data = request.get_json()
 
-    # TODO: Add validation for required fields
-    # if 'required_field' not in data:
-    #     return jsonify({'status': 'error', 'message': 'Missing required field'}), 400
+    # Validate required fields
+    if 'pdf_url' not in data:
+        return jsonify({
+            'status': 'error',
+            'message': 'Missing required field: pdf_url'
+        }), 400
 
-    # TODO: Add processing logic here
-    # For now, just echo back the received data
+    if 'annotations' not in data:
+        return jsonify({
+            'status': 'error',
+            'message': 'Missing required field: annotations'
+        }), 400
 
-    # Option 1: Sync response (for quick processing)
-    result = {
-        'status': 'success',
-        'message': 'JSON received successfully',
-        'received_data': data
-    }
-    return jsonify(result), 200
+    pdf_url = data['pdf_url']
+    annotations = data['annotations']
+    add_margin = data.get('add_margin', True)
 
-    # Option 2: Async processing (uncomment when ready)
-    # task = your_processing_task.delay(data)
-    # return jsonify({
-    #     'status': 'accepted',
-    #     'task_id': task.id,
-    #     'status_url': f"/api/status/{task.id}"
-    # }), 202
+    # Import and run the PDF annotator
+    from processing.pdf_annotator import process_pdf_with_annotations
+
+    result = process_pdf_with_annotations(
+        pdf_url=pdf_url,
+        annotations=annotations,
+        add_margin=add_margin
+    )
+
+    if result['status'] == 'success':
+        return jsonify(result), 200
+    else:
+        return jsonify(result), 500
 
 
 @app.route('/api/status/<task_id>', methods=['GET'])
