@@ -84,6 +84,7 @@ def process_json():
     Add annotations to a PDF.
 
     Request body:
+        - uid (required): Unique identifier for the request (numerical string)
         - pdf_url (required): URL of the PDF to annotate
         - annotations (required): Dictionary with page numbers as keys and list of annotations as values
           Format: {
@@ -94,8 +95,10 @@ def process_json():
 
     Returns:
         - status: success/error
+        - uid: The uid from the request
         - job_id: Unique identifier for this job
-        - output_path: Path to the annotated PDF
+        - output_path: Local path to the annotated PDF
+        - public_url: Public URL of the uploaded PDF on DO Spaces
         - message: Status message
     """
     logger.info("[/api/process] Received request")
@@ -112,6 +115,13 @@ def process_json():
     logger.info("[/api/process] Request data received, validating fields...")
 
     # Validate required fields
+    if 'uid' not in data:
+        logger.warning("[/api/process] Missing required field: uid")
+        return jsonify({
+            'status': 'error',
+            'message': 'Missing required field: uid'
+        }), 400
+
     if 'pdf_url' not in data:
         logger.warning("[/api/process] Missing required field: pdf_url")
         return jsonify({
@@ -126,16 +136,19 @@ def process_json():
             'message': 'Missing required field: annotations'
         }), 400
 
+    uid = data['uid']
     pdf_url = data['pdf_url']
     annotations = data['annotations']
     add_margin = data.get('add_margin', True)
 
+    logger.info("[/api/process] UID: %s", uid)
     logger.info("[/api/process] PDF URL: %s", pdf_url)
     logger.info("[/api/process] Number of pages with annotations: %d", len(annotations))
     logger.info("[/api/process] Add margin: %s", add_margin)
 
     # Import and run the PDF annotator
     from processing.pdf_annotator import process_pdf_with_annotations
+    from processing.do_spaces import upload_to_spaces
 
     logger.info("[/api/process] Starting PDF annotation process...")
     result = process_pdf_with_annotations(
@@ -147,6 +160,62 @@ def process_json():
     if result['status'] == 'success':
         logger.info("[/api/process] PDF annotation completed successfully. Job ID: %s", result.get('job_id'))
         logger.info("[/api/process] Output path: %s", result.get('output_path'))
+
+        # Add uid to result
+        result['uid'] = uid
+
+        # Upload to DigitalOcean Spaces
+        output_path = result.get('output_path')
+        job_id = result.get('job_id')
+
+        # Use a structured path in DO Spaces: annotated-pdfs/{uid}_{job_id}_annotated.pdf
+        destination_path = f"annotated-pdfs/{uid}_{job_id}_annotated.pdf"
+
+        logger.info("[/api/process] Uploading to DO Spaces: %s", destination_path)
+        upload_result = upload_to_spaces(output_path, destination_path)
+
+        if upload_result['status'] == 'success':
+            logger.info("[/api/process] Upload successful. Public URL: %s", upload_result.get('public_url'))
+            result['public_url'] = upload_result.get('public_url')
+
+            # Call external API to update status with verified_copy URL
+            public_url = upload_result.get('public_url')
+            try:
+                import requests as req
+                external_api_url = 'https://deep-evaluation.theiashub.com/api/mains-copies/update'
+                external_payload = {
+                    "uid": str(uid),
+                    "data": {
+                        "status": "Verified",
+                        "verified_copy": public_url
+                    }
+                }
+                logger.info("[/api/process] Calling external API: %s with uid: %s", external_api_url, uid)
+
+                external_response = req.put(
+                    external_api_url,
+                    json=external_payload,
+                    headers={'Content-Type': 'application/json'},
+                    timeout=30,
+                    verify=False
+                )
+
+                if external_response.status_code == 200:
+                    logger.info("[/api/process] External API call successful")
+                    result['external_api_status'] = 'success'
+                else:
+                    logger.warning("[/api/process] External API call failed with status: %s", external_response.status_code)
+                    result['external_api_status'] = 'failed'
+                    result['external_api_error'] = f"HTTP {external_response.status_code}"
+            except Exception as e:
+                logger.error("[/api/process] External API call failed: %s", str(e))
+                result['external_api_status'] = 'failed'
+                result['external_api_error'] = str(e)
+        else:
+            logger.warning("[/api/process] Upload to DO Spaces failed: %s", upload_result.get('message'))
+            result['public_url'] = None
+            result['upload_error'] = upload_result.get('message')
+
         return jsonify(result), 200
     else:
         logger.error("[/api/process] PDF annotation failed: %s", result.get('message'))
