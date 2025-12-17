@@ -59,7 +59,7 @@ def hex_to_rgb(color_name: str) -> tuple:
     return colors.get(color_name.lower(), (1, 0, 0))  # default to red
 
 
-def draw_score_circle(page, x: float, y: float, score_text: str, color: tuple, font, radius: float = 20):
+def draw_score_circle(page, x: float, y: float, score_text: str, color: tuple, font, radius: float = 24.5):
     """
     Draw a score inside a circle.
 
@@ -294,10 +294,10 @@ def add_annotations_to_pdf(pdf_path: str, annotations: dict, output_path: str, a
     if add_margin:
         add_margins(doc, right_margin_inches=2.5, bottom_margin_inches=1.0)
 
-    # Add random red tick marks to each page (3 ticks per page)
-    for page_num in range(len(doc)):
-        page = doc[page_num]
-        add_random_ticks_to_page(page, num_ticks=3, color=(1, 0, 0))  # Red ticks
+    # DISABLED: Random tick marks on pages
+    # for page_num in range(len(doc)):
+    #     page = doc[page_num]
+    #     add_random_ticks_to_page(page, num_ticks=3, color=(1, 0, 0))  # Red ticks
 
     # Load Patrick Hand font
     patrick_hand_font = get_patrick_hand_font()
