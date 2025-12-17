@@ -18,5 +18,5 @@ RUN mkdir -p /app/logs && chmod 777 /app/logs
 
 EXPOSE 5003
 
-CMD ["gunicorn", "--bind=0.0.0.0:5003", "app:app"]
+CMD ["gunicorn", "--bind=0.0.0.0:5003", "--timeout=600", "--workers=2", "app:app"]
 
