@@ -14,7 +14,9 @@ ENV SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt
 ENV REQUESTS_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt
 
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+
+# Install dependencies with retry and timeout options for network reliability
+RUN pip install --no-cache-dir --retries 5 --timeout 60 -r requirements.txt
 
 # Update certifi certificates
 RUN pip install --upgrade certifi
