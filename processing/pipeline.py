@@ -3,6 +3,7 @@ Document Processing Pipeline
 
 This module provides the full pipeline that:
 1. OCR with Vertex AI / Gemini
+1b. Insert blank page based on empty_page_detection (NEW)
 2. Evaluate with OpenAI Assistant
 3. Create annotated PDF
 4. Send evaluation result to external API
@@ -14,10 +15,13 @@ import json
 import os
 import requests
 import urllib3
+import fitz  # PyMuPDF
 from typing import Dict, Any, Tuple, Callable
 
 from .document_processor import DocumentProcessor, safe_json_loads
 from .annotate_pdf import annotate_pdf_with_comments
+from .pdf_annotator import add_margins
+from .do_spaces import upload_to_spaces
 
 # Import task logger for structured logging
 import sys
@@ -30,6 +34,53 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 # External API configuration
 EXTERNAL_API_URL = "https://deep-evaluation.theiashub.com/api/mains-copies/update"
 EXTERNAL_API_MAX_RETRIES = 3
+
+# A4 page dimensions in points (72 points = 1 inch)
+A4_WIDTH = 595   # 8.27 inches
+A4_HEIGHT = 842  # 11.69 inches
+
+
+def insert_blank_page_in_pdf(pdf_path: str, position: int, output_path: str, log) -> str:
+    """
+    Insert a blank A4 page at the specified position in the PDF.
+
+    Args:
+        pdf_path: Path to the input PDF
+        position: Page number where to insert (1-based).
+                  Position 1 means insert at the beginning.
+                  Position 3 means insert after page 2.
+        output_path: Path to save the modified PDF
+        log: Logger for status messages
+
+    Returns:
+        Path to the modified PDF
+    """
+    log.info("Inserting blank A4 page at position %d", position)
+
+    doc = fitz.open(pdf_path)
+
+    # Convert 1-based position to 0-based index for insertion
+    # Position 1 -> insert at index 0 (before first page)
+    # Position 3 -> insert at index 2 (after second page, before third)
+    insert_index = position - 1
+
+    # Ensure insert_index is within valid range
+    if insert_index < 0:
+        insert_index = 0
+    elif insert_index > len(doc):
+        insert_index = len(doc)
+
+    # Insert a new blank A4 page at the specified position
+    doc.insert_page(insert_index, width=A4_WIDTH, height=A4_HEIGHT)
+
+    log.info("✅ Blank page inserted at position %d (index %d). Total pages: %d",
+             position, insert_index, len(doc))
+
+    # Save the modified PDF
+    doc.save(output_path)
+    doc.close()
+
+    return output_path
 
 
 def sanitize_for_json(text: str) -> str:
@@ -449,6 +500,109 @@ def run_full_pipeline(
         update_progress(40, "ocr_completed")
 
         # ==============================================================
+        # STEP 1b: Insert Blank Page Based on empty_page_detection
+        # ==============================================================
+        update_progress(42, "checking_empty_pages")
+        log.info("=" * 60)
+        log.info("STEP 1b: Checking Empty Page Detection")
+        log.info("=" * 60)
+
+        # Parse OCR result to check empty_page_detection
+        ocr_data_for_detection = safe_json_loads(ocr_result)
+        ocr_data_for_detection = normalize_ocr_data(ocr_data_for_detection)
+
+        # Check for empty_page_detection in OCR response
+        empty_page_detection = ocr_data_for_detection.get("empty_page_detection", {})
+        insert_blank_page = empty_page_detection.get("insert_blank_page", False)
+        blank_page_position = empty_page_detection.get("blank_page_position")
+
+        log.info("Empty page detection result:")
+        log.info("  Page 1 empty %%: %s", empty_page_detection.get("page_1_empty_percentage", "N/A"))
+        log.info("  Page 2 empty %%: %s", empty_page_detection.get("page_2_empty_percentage", "N/A"))
+        log.info("  Both mostly empty: %s", empty_page_detection.get("both_pages_mostly_empty", "N/A"))
+        log.info("  Insert blank page: %s", insert_blank_page)
+        log.info("  Blank page position: %s", blank_page_position)
+
+        # PDF path for annotations (may be modified if blank page is inserted)
+        pdf_for_annotation = pdf_path
+
+        if insert_blank_page and blank_page_position:
+            log.info("📄 Inserting blank A4 page at position %d...", blank_page_position)
+
+            # Create path for modified PDF
+            modified_pdf_path = os.path.join(output_dir, f"{task_id}_with_blank_page.pdf")
+
+            # Insert the blank page
+            pdf_for_annotation = insert_blank_page_in_pdf(
+                pdf_path=pdf_path,
+                position=blank_page_position,
+                output_path=modified_pdf_path,
+                log=log
+            )
+
+            log.info("✅ Modified PDF saved to: %s", pdf_for_annotation)
+
+            # ==============================================================
+            # STEP 1c: Add Margins and Upload to DO Spaces
+            # ==============================================================
+            update_progress(43, "adding_margins_and_uploading")
+            log.info("=" * 60)
+            log.info("STEP 1c: Adding Margins and Uploading to DO Spaces")
+            log.info("=" * 60)
+
+            # Create a copy of the PDF with margins for upload
+            pdf_with_margins_path = os.path.join(output_dir, f"{task_id}_with_blank_page_and_margins.pdf")
+
+            # Open the blank page PDF, add margins, and save
+            log.info("Adding right margin (2.5 inches) and bottom margin (1 inch)...")
+            margin_doc = fitz.open(pdf_for_annotation)
+            add_margins(margin_doc, right_margin_inches=2.5, bottom_margin_inches=1.0)
+            margin_doc.save(pdf_with_margins_path)
+            margin_doc.close()
+            log.info("✅ Margins added. Saved to: %s", pdf_with_margins_path)
+
+            # Upload to DO Spaces
+            destination_path = f"blank-page-pdfs/{uid}_{task_id}_with_blank_page.pdf"
+            log.info("Uploading to DO Spaces: %s", destination_path)
+
+            upload_result = upload_to_spaces(pdf_with_margins_path, destination_path)
+
+            if upload_result['status'] == 'success':
+                blank_page_pdf_url = upload_result.get('public_url')
+                log.info("✅ Upload successful. Public URL: %s", blank_page_pdf_url)
+
+                # Call external API to update with copy_with_blank_pages_url
+                log.info("Calling external API with copy_with_blank_pages_url...")
+                try:
+                    external_payload = {
+                        "uid": str(uid),
+                        "data": {
+                            "copy_with_blank_pages_url": blank_page_pdf_url
+                        }
+                    }
+
+                    external_response = requests.put(
+                        EXTERNAL_API_URL,
+                        json=external_payload,
+                        headers={'Content-Type': 'application/json'},
+                        timeout=30,
+                        verify=False
+                    )
+
+                    if external_response.status_code == 200:
+                        log.info("✅ External API call successful for copy_with_blank_pages_url")
+                    else:
+                        log.warning("⚠️ External API call failed with status: %d", external_response.status_code)
+                except Exception as e:
+                    log.warning("⚠️ External API call failed: %s", str(e))
+            else:
+                log.warning("⚠️ Upload to DO Spaces failed: %s", upload_result.get('message'))
+        else:
+            log.info("ℹ️ No blank page insertion needed")
+
+        update_progress(44, "blank_page_check_completed")
+
+        # ==============================================================
         # STEP 2: Evaluation with OpenAI Assistant
         # ==============================================================
         update_progress(45, "evaluation_starting")
@@ -500,11 +654,13 @@ def run_full_pipeline(
         log.info("=" * 60)
         log.info("STEP 3: Creating Annotated PDF")
         log.info("=" * 60)
+        log.info("Using PDF for annotation: %s", pdf_for_annotation)
 
         try:
             # Pass OCR data and metadata for drawing underlines
+            # Use pdf_for_annotation which may have blank page inserted
             annotate_pdf_with_comments(
-                pdf_path,
+                pdf_for_annotation,  # Use modified PDF with blank page if inserted
                 evaluation,
                 annotated_pdf_path,
                 ocr_data=ocr_data,      # For drawing red underlines
@@ -516,6 +672,58 @@ def run_full_pipeline(
             annotated_pdf_path = None
 
         update_progress(85, "annotation_completed")
+
+        # ==============================================================
+        # STEP 3b: Upload Annotated PDF to DO Spaces and update verified_copy
+        # ==============================================================
+        annotated_pdf_url = None
+        verified_copy_api_success = False
+
+        if annotated_pdf_path and os.path.exists(annotated_pdf_path):
+            update_progress(87, "uploading_annotated_pdf")
+            log.info("=" * 60)
+            log.info("STEP 3b: Uploading Annotated PDF to DO Spaces")
+            log.info("=" * 60)
+
+            # Upload to DO Spaces
+            annotated_destination_path = f"annotated-pdfs/{uid}_{task_id}_annotated.pdf"
+            log.info("Uploading annotated PDF to DO Spaces: %s", annotated_destination_path)
+
+            annotated_upload_result = upload_to_spaces(annotated_pdf_path, annotated_destination_path)
+
+            if annotated_upload_result['status'] == 'success':
+                annotated_pdf_url = annotated_upload_result.get('public_url')
+                log.info("✅ Annotated PDF upload successful. Public URL: %s", annotated_pdf_url)
+
+                # Call external API to update with verified_copy
+                log.info("Calling external API with verified_copy...")
+                try:
+                    verified_copy_payload = {
+                        "uid": str(uid),
+                        "data": {
+                            "verified_copy": annotated_pdf_url
+                        }
+                    }
+
+                    verified_copy_response = requests.put(
+                        EXTERNAL_API_URL,
+                        json=verified_copy_payload,
+                        headers={'Content-Type': 'application/json'},
+                        timeout=30,
+                        verify=False
+                    )
+
+                    if verified_copy_response.status_code == 200:
+                        log.info("✅ External API call successful for verified_copy")
+                        verified_copy_api_success = True
+                    else:
+                        log.warning("⚠️ External API call for verified_copy failed with status: %d", verified_copy_response.status_code)
+                except Exception as e:
+                    log.warning("⚠️ External API call for verified_copy failed: %s", str(e))
+            else:
+                log.warning("⚠️ Upload annotated PDF to DO Spaces failed: %s", annotated_upload_result.get('message'))
+        else:
+            log.warning("⚠️ Annotated PDF not available for upload")
 
         # ==============================================================
         # STEP 4: Send Evaluation to External API
@@ -561,6 +769,9 @@ def run_full_pipeline(
         log.info("   Evaluation:      %s", evaluation_output_path)
         if annotated_pdf_path:
             log.info("   Annotated PDF:   %s", annotated_pdf_path)
+        if annotated_pdf_url:
+            log.info("   Annotated URL:   %s", annotated_pdf_url)
+        log.info("   Verified Copy:   %s", "Success" if verified_copy_api_success else "Failed")
         log.info("   External API:    %s", "Success" if external_api_success else f"Failed - {external_api_message}")
         log.info("   Process API:     %s", "Success" if process_api_success else f"Failed - {process_api_message}" if external_api_success else "Skipped")
 
@@ -569,6 +780,8 @@ def run_full_pipeline(
             'ocr_output_path': ocr_output_path,
             'evaluation_output_path': evaluation_output_path,
             'annotated_pdf_path': annotated_pdf_path,
+            'annotated_pdf_url': annotated_pdf_url,
+            'verified_copy_api_success': verified_copy_api_success,
             'validation_errors': validation_errors if not is_valid else [],
             'pages_processed': len(metadata),
             'external_api_success': external_api_success,

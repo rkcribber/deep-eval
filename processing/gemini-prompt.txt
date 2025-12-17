@@ -1,10 +1,52 @@
 *TASK:* Act as a specialized Document Processor. Your goals are:
-1. Execute the entire text cleaning and structural re-assembly pipeline on the raw input data and map the corrected text to the original geometric coordinates.
-2. For EACH PAGE, randomly select 2 distinct words/phrases and provide their coordinates for underlining.
+1. **FIRST: Detect empty pages** - Check if the first two pages are partially empty (>20% empty).
+2. Execute the entire text cleaning and structural re-assembly pipeline on the raw input data and map the corrected text to the original geometric coordinates.
+3. For EACH PAGE, randomly select 2 distinct words/phrases and provide their coordinates for underlining.
 
 *INPUT DATA:*
 1. *RAW_OCR_TEXT:* [EXTRACT TEXT FROM THE PROVIDED PAGE IMAGES]
 2. *RAW_COORD_MAP:* [EXTRACT BOUNDING BOX COORDINATES FROM THE PROVIDED PAGE IMAGES]
+
+*EMPTY PAGE DETECTION & BLANK PAGE INSERTION (CRITICAL - PROCESS FIRST):*
+⚠️ BEFORE processing any text, you MUST check the first two pages for emptiness:
+
+**Step 1: Analyze Pages 1 and 2**
+- Calculate the empty percentage for each of the first two pages
+- A page's empty percentage is the portion of the page without text/content
+- Ignore watermarks and prohibited texts when calculating content
+
+**Step 2: If BOTH page_1_empty_percentage > 50% AND page_2_empty_percentage > 50%:**
+- Set "insert_blank_page": true
+- Set "blank_page_position": 1
+- **CRITICAL: Insert NEW BLANK PAGE at position 1 and renumber ALL pages**
+  - NEW BLANK PAGE → becomes Page 1
+  - Original Page 1 → becomes Page 2
+  - Original Page 2 → becomes Page 3
+  - Original Page 3 → becomes Page 4
+  - ... and so on
+
+**Step 3: If BOTH page_1_empty_percentage > 20% AND page_2_empty_percentage > 20% (but NOT both > 50%):**
+- Set "insert_blank_page": true
+- Set "blank_page_position": 3
+- **CRITICAL: Insert NEW BLANK PAGE at position 3 and renumber subsequent pages**
+  - Original Page 1 → stays Page 1
+  - Original Page 2 → stays Page 2
+  - NEW BLANK PAGE → becomes Page 3
+  - Original Page 3 → becomes Page 4
+  - Original Page 4 → becomes Page 5
+  - ... and so on
+
+**Step 4: If either page has 20% or less empty space (has significant content):**
+- Set "insert_blank_page": true
+- Set "blank_page_position": 1
+- **CRITICAL: Insert NEW BLANK PAGE at position 1 and renumber ALL pages**
+  - NEW BLANK PAGE → becomes Page 1
+  - Original Page 1 → becomes Page 2
+  - Original Page 2 → becomes Page 3
+  - Original Page 3 → becomes Page 4
+  - ... and so on
+
+⚠️ IMPORTANT: A blank page is ALWAYS inserted. All coordinates and page numbers in the output must reflect the NEW page numbering system AFTER the blank page insertion. The OCR coordinates should correspond to the final page positions.
 
 *PROHIBITED TEXTS (MUST IGNORE):*
 ⚠️ DO NOT include any of the following texts in the output. These are watermarks, branding, or irrelevant content that must be completely excluded:
@@ -69,9 +111,18 @@ Examples of WRONG coordinates (NEVER DO THIS):
 
 OUTPUT FORMAT (MANDATORY — NO DEVIATION):
 {
+  "empty_page_detection": {
+    "page_1_empty_percentage": <0-100 number>,
+    "page_2_empty_percentage": <0-100 number>,
+    "both_pages_mostly_empty": <true/false>,
+    "insert_blank_page": true,
+    "blank_page_position": <1 or 3>
+  },
   "Pages": [
     {
-      "Page_Number": <page_number>,
+      "Page_Number": <page_number - MUST reflect NEW numbering if blank page inserted>,
+      "Original_Page_Number": <original page number before any insertion>,
+      "Is_Inserted_Blank": <true/false - set true ONLY for the inserted blank page>,
       "Underlines": [
         {
           "text": "<the word or phrase to underline>",
@@ -99,10 +150,40 @@ OUTPUT FORMAT (MANDATORY — NO DEVIATION):
 }
 
 IMPORTANT FOR UNDERLINES:
-- Each page MUST have exactly 2 entries in the "Underlines" array
+- Each page MUST have exactly 2 entries in the "Underlines" array (except for inserted blank pages which have 0)
 - The coordinates for underlines are [x1_start, y_bottom, x2_end, y_bottom] - a horizontal line
 - y_bottom should be slightly below the text (add ~0.01 to the text's y2 coordinate)
 - These are for drawing RED horizontal lines under the selected words
+
+IMPORTANT FOR BLANK PAGE INSERTION:
+- A blank page is ALWAYS inserted (insert_blank_page is always true)
+- The blank page entry should have: "Is_Inserted_Blank": true, "Underlines": [], "Blocks": []
+- All pages AFTER the blank page must have their Page_Number adjusted accordingly
+- Original_Page_Number tracks the original position for coordinate reference
+
+Example when BOTH pages are >50% empty (blank inserted at position 1):
+Condition: page_1_empty_percentage=75, page_2_empty_percentage=80 (both > 50%)
+- Page 1: Page_Number=1, Original_Page_Number=null, Is_Inserted_Blank=true (NEW BLANK)
+- Page 2: Page_Number=2, Original_Page_Number=1 (was originally page 1)
+- Page 3: Page_Number=3, Original_Page_Number=2 (was originally page 2)
+- Page 4: Page_Number=4, Original_Page_Number=3 (was originally page 3)
+- Page 5: Page_Number=5, Original_Page_Number=4 (was originally page 4)
+
+Example when BOTH pages are >20% but NOT both >50% (blank inserted at position 3):
+Condition: page_1_empty_percentage=35, page_2_empty_percentage=45 (both > 20%, but not both > 50%)
+- Page 1: Page_Number=1, Original_Page_Number=1
+- Page 2: Page_Number=2, Original_Page_Number=2
+- Page 3: Page_Number=3, Original_Page_Number=null, Is_Inserted_Blank=true (NEW BLANK)
+- Page 4: Page_Number=4, Original_Page_Number=3 (was originally page 3)
+- Page 5: Page_Number=5, Original_Page_Number=4 (was originally page 4)
+
+Example when either page has ≤20% empty (blank inserted at position 1):
+Condition: page_1_empty_percentage=15, page_2_empty_percentage=70 (page 1 is ≤20%, has content)
+- Page 1: Page_Number=1, Original_Page_Number=null, Is_Inserted_Blank=true (NEW BLANK)
+- Page 2: Page_Number=2, Original_Page_Number=1 (was originally page 1)
+- Page 3: Page_Number=3, Original_Page_Number=2 (was originally page 2)
+- Page 4: Page_Number=4, Original_Page_Number=3 (was originally page 3)
+- Page 5: Page_Number=5, Original_Page_Number=4 (was originally page 4)
 
 ⚠️ FINAL REMINDER - VALID JSON OUTPUT REQUIRED ⚠️
 - All coordinate values must be PURE DECIMAL NUMBERS between 0.0 and 1.0

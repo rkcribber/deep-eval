@@ -182,34 +182,80 @@ def annotate_pdf_with_comments(pdf_path: str, evaluation: dict, output_path: str
     # Open PDF
     doc = fitz.open(pdf_path)
 
-    # Add 2.5 inch right margin to each page (2.5 * 72 = 180 points)
-    RIGHT_MARGIN = 180
+    # ===========================================
+    # Add right margin (2.5 inches) and bottom margin (1 inch)
+    # ===========================================
+    RIGHT_MARGIN_INCHES = 2.5
+    BOTTOM_MARGIN_INCHES = 1.0
+    RIGHT_MARGIN = int(RIGHT_MARGIN_INCHES * 72)  # 180 points
+    BOTTOM_MARGIN = int(BOTTOM_MARGIN_INCHES * 72)  # 72 points
 
-    print("Adding 2.5 inch right margin to each page...")
-    for page_num in range(len(doc)):
-        page = doc[page_num]
-        current_rect = page.rect
-        new_width = current_rect.width + RIGHT_MARGIN
-        new_rect = fitz.Rect(0, 0, new_width, current_rect.height)
-        page.set_mediabox(new_rect)
+    print(f"Adding {RIGHT_MARGIN_INCHES} inch right margin and {BOTTOM_MARGIN_INCHES} inch bottom margin...")
 
-    print(f"Added {RIGHT_MARGIN} points (2.5 inches) right margin to all pages.")
+    # Create a new document to hold the modified pages
+    new_doc = fitz.open()
+
+    for page_idx in range(len(doc)):
+        old_page = doc[page_idx]
+        old_rect = old_page.rect
+        old_width = old_rect.width
+        old_height = old_rect.height
+
+        new_width = old_width + RIGHT_MARGIN
+        new_height = old_height + BOTTOM_MARGIN
+
+        # Create a new blank page with the expanded dimensions
+        new_page = new_doc.new_page(width=new_width, height=new_height)
+
+        # Check if the page has any content (text, images, or drawings)
+        page_text = old_page.get_text().strip()
+        page_images = old_page.get_images()
+        page_drawings = old_page.get_drawings()
+
+        is_blank_page = len(page_text) == 0 and len(page_images) == 0 and len(page_drawings) == 0
+
+        if not is_blank_page:
+            # Place original content at top-left, leaving bottom margin empty
+            target_rect = fitz.Rect(0, 0, old_width, old_height)
+            try:
+                new_page.show_pdf_page(target_rect, doc, page_idx)
+            except Exception as e:
+                print(f"Warning: Could not copy page {page_idx}: {e}")
+
+    # Close original doc and save new_doc to a temp location, then reopen
+    doc.close()
+
+    # Save to a temp file first, then we'll add annotations and save to output_path
+    import tempfile
+    temp_fd, temp_path = tempfile.mkstemp(suffix='.pdf')
+    os.close(temp_fd)
+
+    new_doc.save(temp_path)
+    new_doc.close()
+
+    # Reopen the saved document for adding annotations
+    doc = fitz.open(temp_path)
+
+    print(f"Added {RIGHT_MARGIN} points ({RIGHT_MARGIN_INCHES} inches) right margin and {BOTTOM_MARGIN} points ({BOTTOM_MARGIN_INCHES} inch) bottom margin to all pages.")
 
     # ===========================================
-    # STEP 1: Draw RED underlines from OCR data
+    # STEP 1: Draw RED underlines from OCR data (DISABLED)
     # ===========================================
     underline_count = 0
-    if ocr_data:
-        print("Drawing red underlines from Gemini OCR data...")
-        underline_count = draw_underlines_from_ocr(doc, ocr_data, pages_metadata)
-        print(f"Drew {underline_count} red underlines.")
+    # DISABLED: Underline drawing removed per user request
+    # if ocr_data:
+    #     print("Drawing red underlines from Gemini OCR data...")
+    #     underline_count = draw_underlines_from_ocr(doc, ocr_data, pages_metadata)
+    #     print(f"Drew {underline_count} red underlines.")
 
     # ===========================================
-    # STEP 2: Draw GREEN tick marks at random positions
+    # STEP 2: Draw GREEN tick marks at random positions (DISABLED)
     # ===========================================
-    print("Drawing tick marks on each page...")
-    tick_count = draw_tick_marks_on_pages(doc, num_ticks_per_page=4)
-    print(f"Drew {tick_count} tick marks total.")
+    tick_count = 0
+    # DISABLED: Tick marks removed per user request
+    # print("Drawing tick marks on each page...")
+    # tick_count = draw_tick_marks_on_pages(doc, num_ticks_per_page=4)
+    # print(f"Drew {tick_count} tick marks total.")
 
     # ===========================================
     # STEP 3: Add text annotations from evaluation
@@ -219,10 +265,65 @@ def annotate_pdf_with_comments(pdf_path: str, evaluation: dict, output_path: str
 
     annotation_count = 0
 
+    # Load Patrick Hand font for scores
+    font_path = os.path.join(os.path.dirname(__file__), "PatrickHand-Regular.ttf")
+
     # Process each question
     questions = evaluation.get("Questions", {})
 
     for q_id, q_data in questions.items():
+        # ===========================================
+        # Draw Score in a circle on the first page of the question
+        # ===========================================
+        score = q_data.get("Score", "")
+        pages_info = q_data.get("Pages", {})
+        first_page = pages_info.get("first")
+
+        if score and first_page:
+            try:
+                score_page_num = int(first_page) - 1  # Convert to 0-indexed
+                if 0 <= score_page_num < len(doc):
+                    page = doc[score_page_num]
+
+                    # Position score in top-left area
+                    score_x = 50  # Left margin
+                    score_y = 105  # Top area (shifted down by 25)
+                    radius = 24.5
+
+                    # Draw circle
+                    shape = page.new_shape()
+                    shape.draw_circle(fitz.Point(score_x, score_y), radius)
+                    shape.finish(color=RED_COLOR, width=2, fill=None)
+                    shape.commit()
+
+                    # Draw score text centered in circle
+                    score_text = str(score)
+                    # Calculate font size based on text length
+                    if len(score_text) <= 2:
+                        font_size = radius * 1.2
+                    elif len(score_text) <= 4:
+                        font_size = radius * 0.9
+                    else:
+                        font_size = radius * 0.7
+
+                    # Center text in circle
+                    text_width = len(score_text) * font_size * 0.4
+                    text_x = score_x - text_width / 2
+                    text_y = score_y + font_size / 3
+
+                    page.insert_text(
+                        fitz.Point(text_x, text_y),
+                        score_text,
+                        fontsize=font_size,
+                        color=RED_COLOR,
+                        fontname="patrickhand",
+                        fontfile=font_path
+                    )
+
+                    print(f"Added score {score} for {q_id} on page {score_page_num + 1}")
+            except (ValueError, TypeError) as e:
+                print(f"Warning: Could not add score for {q_id}: {e}")
+
         comments = q_data.get("Comments", {})
 
         # Process Introduction, Body, Conclusion
@@ -339,17 +440,7 @@ def annotate_pdf_with_comments(pdf_path: str, evaluation: dict, output_path: str
         summary_y = page_height - 60  # 60 points from bottom
         summary_x = 50  # Left margin
 
-        # Add "Summary:" label
-        page.insert_text(
-            fitz.Point(summary_x, summary_y),
-            f"{q_id} Summary:",
-            fontsize=17,  # Increased from 14 to 17
-            color=SUMMARY_COLOR,
-            fontname="patrickhand",
-            fontfile=font_path
-        )
-
-        # Wrap and add summary text
+        # Wrap and add summary text (no label prefix)
         max_width = page_width - 100  # Leave margins
         words = summary_text.split()
         lines = []
@@ -368,7 +459,7 @@ def annotate_pdf_with_comments(pdf_path: str, evaluation: dict, output_path: str
             lines.append(current_line)
 
         # Insert summary lines
-        y_offset = summary_y + 20  # Increased spacing for larger font
+        y_offset = summary_y  # Start at summary position (no label above)
         for line in lines:
             if y_offset < page_height - 10:
                 page.insert_text(
@@ -461,9 +552,16 @@ def annotate_pdf_with_comments(pdf_path: str, evaluation: dict, output_path: str
 
         print(f"Added {len(overall_summary)} bullet points to Overall Summary page")
 
-    # Save the annotated PDF
-    doc.save(output_path)
+    # Save the annotated PDF to the final output path
+    doc.save(output_path, garbage=4, deflate=True)
     doc.close()
+
+    # Clean up temp file
+    try:
+        if 'temp_path' in dir() and os.path.exists(temp_path):
+            os.remove(temp_path)
+    except:
+        pass
 
     print(f"\n{'=' * 60}")
     print(f"✅ Annotated PDF saved to: {output_path}")

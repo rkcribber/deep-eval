@@ -513,23 +513,39 @@ MODEL ANSWER (OCR extracted):
         if not run_id:
             raise RuntimeError(f"Run ID missing in response: {json.dumps(run_data)}")
 
-        # 3. Poll for completion
+        # 3. Poll for completion with timeout and retry logic
         status = None
-        while status not in ["completed", "failed", "cancelled"]:
-            time.sleep(2)
+        max_wait_time = 600  # Maximum 10 minutes for OpenAI to complete
+        poll_interval = 3   # Check every 3 seconds
+        elapsed_time = 0
 
-            status_response = session.get(
-                f"https://api.openai.com/v1/threads/{thread_id}/runs/{run_id}",
-                headers=headers,
-                verify=False,
-            )
+        while status not in ["completed", "failed", "cancelled", "expired"]:
+            if elapsed_time >= max_wait_time:
+                logger.warning("OpenAI Assistant timed out after %d seconds", elapsed_time)
+                raise RuntimeError(f"OpenAI Assistant timed out after {max_wait_time} seconds")
 
-            if not status_response.ok:
-                raise RuntimeError(f"Failed to get run status: {status_response.text}")
+            time.sleep(poll_interval)
+            elapsed_time += poll_interval
 
-            status_data = status_response.json()
-            status = status_data.get("status")
-            logger.debug("Assistant run status: %s", status)
+            try:
+                status_response = session.get(
+                    f"https://api.openai.com/v1/threads/{thread_id}/runs/{run_id}",
+                    headers=headers,
+                    verify=False,
+                    timeout=30,
+                )
+
+                if not status_response.ok:
+                    logger.warning("Failed to get run status (attempt will retry): %s", status_response.text)
+                    continue
+
+                status_data = status_response.json()
+                status = status_data.get("status")
+                logger.debug("Assistant run status: %s (elapsed: %ds)", status, elapsed_time)
+
+            except requests.exceptions.RequestException as e:
+                logger.warning("Request error during polling (will retry): %s", str(e))
+                continue
 
         if status != "completed":
             raise RuntimeError(f"Run did not complete successfully (status: {status})")

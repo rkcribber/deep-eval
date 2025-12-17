@@ -216,14 +216,26 @@ def add_margins(doc, right_margin_inches: float = 2.5, bottom_margin_inches: flo
         # Create a new blank page with the expanded dimensions
         new_page = new_doc.new_page(width=new_width, height=new_height)
 
-        # Define where to place the original content on the new page
-        # Place it at top-left, leaving bottom margin empty
-        # The clip rect is the original page area
-        # The target rect is where to draw it on the new page (at top, leaving bottom margin)
-        target_rect = fitz.Rect(0, 0, old_width, old_height)
+        # Check if the page has any content (text, images, or drawings)
+        # A blank page will have no text and no images
+        page_text = old_page.get_text().strip()
+        page_images = old_page.get_images()
+        page_drawings = old_page.get_drawings()
 
-        # Copy the original page content to the new page at the top
-        new_page.show_pdf_page(target_rect, doc, page_idx)
+        is_blank_page = len(page_text) == 0 and len(page_images) == 0 and len(page_drawings) == 0
+
+        if not is_blank_page:
+            # Define where to place the original content on the new page
+            # Place it at top-left, leaving bottom margin empty
+            target_rect = fitz.Rect(0, 0, old_width, old_height)
+
+            # Copy the original page content to the new page at the top
+            try:
+                new_page.show_pdf_page(target_rect, doc, page_idx)
+            except Exception as e:
+                # If show_pdf_page fails, the page might still be empty
+                print(f"Warning: Could not copy page {page_idx}: {e}")
+        # else: leave the new page blank (it's already blank)
 
     # Replace original doc pages with new ones
     # First, delete all pages from original doc
