@@ -35,15 +35,65 @@ def sanitize_json_string(json_str: str) -> str:
     Fixes issues like:
     - "0 astounding" instead of "0.12"
     - Random words inserted in number arrays
+    - Hindi/Devanagari text inserted in coordinate arrays
+    - Text with special characters like parentheses in coordinates
     """
-    # Pattern to find invalid entries in coordinate arrays
-    # Matches patterns like: 0 astounding, or word, in arrays
-    # Replace "0 word" patterns with just "0.0"
+    # Pattern 1: Replace "number word" patterns with just "number.0"
+    # e.g., "0 astounding" -> "0.0"
     json_str = re.sub(r'(\d+)\s+[a-zA-Z]+\s*,', r'\1.0,', json_str)
 
-    # Remove any standalone words in arrays that should only contain numbers
-    # This handles cases like [0.12, word, 0.34, 0.56]
+    # Pattern 2: Remove standalone ASCII words in arrays
+    # e.g., [0.12, word, 0.34] -> [0.12, 0.0, 0.34]
     json_str = re.sub(r',\s*[a-zA-Z_]+\s*,', ', 0.0,', json_str)
+
+    # Pattern 3: Fix coordinate arrays with text/Hindi content inserted
+    # This handles cases like:
+    #   "Coordinates": [0.22, 0.627, \n विशेषाधिकार (Art 29, Art 30)", 0.862, 0.712]
+    # We need to find and fix malformed coordinate arrays
+
+    # Find all "Coordinates": [...] or "coordinates": [...] blocks and validate them
+    def fix_coordinates_array(match):
+        full_match = match.group(0)
+        key = match.group(1)  # "Coordinates" or "coordinates"
+        content = match.group(2)  # The array content
+
+        # Split by comma and filter to keep only valid numbers
+        parts = content.split(',')
+        cleaned_parts = []
+
+        for part in parts:
+            part = part.strip()
+            # Check if it's a valid number (integer or decimal)
+            if re.match(r'^-?\d+\.?\d*$', part):
+                cleaned_parts.append(part)
+            elif re.match(r'^-?\d+\.\d*$', part.split()[0] if part.split() else ''):
+                # Handle "0.627\n text" - take just the number
+                num_match = re.match(r'^(-?\d+\.?\d*)', part)
+                if num_match:
+                    cleaned_parts.append(num_match.group(1))
+                else:
+                    cleaned_parts.append('0.0')
+            else:
+                # Try to extract any number from the part
+                num_match = re.search(r'(-?\d+\.?\d*)', part)
+                if num_match and len(num_match.group(1)) > 0:
+                    cleaned_parts.append(num_match.group(1))
+                # Skip non-numeric parts entirely
+
+        # Ensure we have exactly 4 coordinates, pad with 0.0 if needed
+        while len(cleaned_parts) < 4:
+            cleaned_parts.append('0.0')
+        cleaned_parts = cleaned_parts[:4]  # Take only first 4
+
+        return f'"{key}": [{", ".join(cleaned_parts)}]'
+
+    # Apply coordinate array fix - match multiline coordinate arrays
+    json_str = re.sub(
+        r'"(Coordinates|coordinates)":\s*\[\s*([^\]]+)\]',
+        fix_coordinates_array,
+        json_str,
+        flags=re.MULTILINE | re.DOTALL
+    )
 
     return json_str
 
@@ -421,14 +471,14 @@ class DocumentProcessor:
         try:
             ocr_text = data["candidates"][0]["content"]["parts"][0]["text"]
         except (KeyError, IndexError):
-            return json.dumps(data, indent=2), pages_metadata
+            return json.dumps(data, indent=2, ensure_ascii=False), pages_metadata
 
         # If coordinate conversion is enabled, convert normalized coords to PDF coords
         if convert_coords:
             try:
                 ocr_result = safe_json_loads(ocr_text)
                 ocr_result = self.convert_ocr_result_coords(ocr_result, pages_metadata)
-                return json.dumps(ocr_result, indent=2), pages_metadata
+                return json.dumps(ocr_result, indent=2, ensure_ascii=False), pages_metadata
             except json.JSONDecodeError:
                 logger.warning("Could not parse OCR result for coordinate conversion")
                 return ocr_text, pages_metadata

@@ -490,8 +490,8 @@ def run_full_pipeline(
 
         ocr_result, metadata = processor.extract_text(pdf_path)
 
-        # Save OCR result
-        with open(ocr_output_path, "w") as f:
+        # Save OCR result with UTF-8 encoding to preserve Devanagari text
+        with open(ocr_output_path, "w", encoding="utf-8") as f:
             f.write(ocr_result)
 
         log.info("✅ OCR Output saved to: %s", ocr_output_path)
