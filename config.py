@@ -30,7 +30,7 @@ CELERY_CONFIG = {
     'timezone': 'UTC',
     'enable_utc': True,
     'task_track_started': True,
-    
+
     # Broker connection retry on startup (suppresses deprecation warning)
     'broker_connection_retry_on_startup': True,
 
