@@ -1,7 +1,12 @@
 *TASK:* Act as a specialized Document Processor. Your goals are:
 1. **FIRST: Detect empty pages** - Check if the first two pages are partially empty (>20% empty).
 2. Execute the entire text cleaning and structural re-assembly pipeline on the raw input data and map the corrected text to the original geometric coordinates.
-3. For EACH PAGE, randomly select 2 distinct words/phrases and provide their coordinates for underlining.
+
+⚠️ **CRITICAL - TEXT OUTPUT FORMAT:**
+- ALL "text" fields MUST contain readable text in their ORIGINAL SCRIPT (Devanagari for Hindi, English for English, etc.)
+- DO NOT output Unicode escape sequences like \u0915\u0943\u092a\u092f\u093e
+- Output the actual readable characters: कृपया, राज्यव्यवस्था, संविधान, etc.
+- The JSON response must be UTF-8 encoded with human-readable text, NOT escaped Unicode
 
 *INPUT DATA:*
 1. *RAW_OCR_TEXT:* [EXTRACT TEXT FROM THE PROVIDED PAGE IMAGES]
@@ -62,16 +67,11 @@ Any text block containing these prohibited texts should be entirely omitted from
 2. *Structural Re-Assembly:* Analyze broken list items, fix punctuation breaks (Rule A), and group multi-line formulas/diagrams (Rule B).
 3. *Example Tagging:* Standardize all example indicators to "Eg." and integrate them seamlessly into the corrected text.
 
-*UNDERLINE SELECTION (NEW - REQUIRED):*
-For EACH page in the document:
-- Select exactly 2 random words or short phrases (2-4 words) from the page content
-- These should be meaningful words (nouns, verbs, key terms) - NOT articles, prepositions, or watermarks
-- Provide the precise coordinates for drawing a RED underline beneath these words
-- The underline coordinates should be: [x1_start, y_bottom, x2_end, y_bottom] where y_bottom is just below the text baseline
 
 *OUTPUT GENERATION (Final Mapping):*
 * Create a single valid JSON object.
 * The text field must contain the *FINAL, CLEANED, and CORRECTED TEXT*.
+* ⚠️ **TEXT MUST BE IN READABLE DEVANAGARI SCRIPT** (e.g., "कृपया प्रश्नों के उत्तर"), NOT Unicode escapes (e.g., "\u0915\u0943\u092a\u092f\u093e")
 * The original_line_ids and coordinates must map to the original geometric anchors from the RAW_COORD_MAP.
 
 
@@ -91,19 +91,54 @@ Rules:
 - DO NOT return raw pixel values (like 166, 821, etc.)
 - DO NOT return values greater than 1.0
 
-⚠️ CRITICAL JSON FORMAT RULES - COORDINATES MUST BE PURE NUMBERS ONLY ⚠️
-- Coordinates array MUST contain ONLY numeric values (decimals like 0.123)
-- NEVER include words, text, or descriptions inside coordinate arrays
-- NEVER mix numbers with words like "0 astounding" or "0.5 remarkable"
-- Each coordinate value must be a standalone decimal number
+⚠️⚠️⚠️ CRITICAL - STRICT JSON COORDINATE FORMAT - READ CAREFULLY ⚠️⚠️⚠️
+
+**ABSOLUTE RULES FOR COORDINATES ARRAYS:**
+1. Coordinates array MUST contain EXACTLY 4 numeric values - nothing else
+2. Each value MUST be a decimal number between 0.0 and 1.0
+3. Format: "Coordinates": [x1, y1, x2, y2] where ALL are pure numbers
+4. NEVER insert ANY text, Hindi text, English text, or any non-numeric content
+5. NEVER let text from the "text" field leak into the Coordinates array
+6. Each coordinate entry must be completely separate from text content
+
+**COMMON ERROR TO AVOID - DO NOT DO THIS:**
+This is WRONG (text leaked into coordinates):
+```json
+{
+  "text": "→ शिक्षा और रोजगार के अवसरों में आरक्षण",
+  "Coordinates": [
+    0.22,
+    0.627,
+ विशेषाधिकार (Art 29, Art 30)",   <-- WRONG! Text inside coordinates!
+    0.862,
+    0.712
+  ]
+}
+```
+
+This is CORRECT (coordinates are pure numbers only):
+```json
+{
+  "text": "→ शिक्षा और रोजगार के अवसरों में आरक्षण",
+  "Coordinates": [0.22, 0.627, 0.862, 0.712]
+}
+```
+
+**VALIDATION BEFORE OUTPUT:**
+Before outputting each Coordinates array, verify:
+✓ Exactly 4 values
+✓ All values are decimal numbers (0.0 to 1.0)
+✓ No text, Hindi, English, or special characters
+✓ No newlines or extra content inside the array
 
 Example of CORRECT coordinates:
   "Coordinates": [0.10, 0.05, 0.95, 0.12]  ✓ (all values are pure decimal numbers)
 
 Examples of WRONG coordinates (NEVER DO THIS):
   "Coordinates": [166, 151, 821, 386]  ✗ (pixel values, not normalized)
-  "Coordinates": [0 astounding, 0.5, 0.9, 0.12]  ✗ (INVALID - contains word "astounding")
-  "Coordinates": [0.1 great, 0.2, 0.8, 0.9]  ✗ (INVALID - contains word "great")
+  "Coordinates": [0 astounding, 0.5, 0.9, 0.12]  ✗ (INVALID - contains word)
+  "Coordinates": [0.1, 0.2, विशेषाधिकार, 0.9]  ✗ (INVALID - Hindi text inside)
+  "Coordinates": [0.1, 0.2, "Art 29", 0.9]  ✗ (INVALID - English text inside)
   "Coordinates": ["0.1", "0.2", "0.8", "0.9"]  ✗ (INVALID - strings instead of numbers)
 
 
@@ -123,16 +158,6 @@ OUTPUT FORMAT (MANDATORY — NO DEVIATION):
       "Page_Number": <page_number - MUST reflect NEW numbering if blank page inserted>,
       "Original_Page_Number": <original page number before any insertion>,
       "Is_Inserted_Blank": <true/false - set true ONLY for the inserted blank page>,
-      "Underlines": [
-        {
-          "text": "<the word or phrase to underline>",
-          "coordinates": [x1_start, y_bottom, x2_end, y_bottom]
-        },
-        {
-          "text": "<second word or phrase to underline>",
-          "coordinates": [x1_start, y_bottom, x2_end, y_bottom]
-        }
-      ],
       "Blocks": [
         {
           "Block_Number": <block_number>,
@@ -149,15 +174,10 @@ OUTPUT FORMAT (MANDATORY — NO DEVIATION):
   ]
 }
 
-IMPORTANT FOR UNDERLINES:
-- Each page MUST have exactly 2 entries in the "Underlines" array (except for inserted blank pages which have 0)
-- The coordinates for underlines are [x1_start, y_bottom, x2_end, y_bottom] - a horizontal line
-- y_bottom should be slightly below the text (add ~0.01 to the text's y2 coordinate)
-- These are for drawing RED horizontal lines under the selected words
 
 IMPORTANT FOR BLANK PAGE INSERTION:
 - A blank page is ALWAYS inserted (insert_blank_page is always true)
-- The blank page entry should have: "Is_Inserted_Blank": true, "Underlines": [], "Blocks": []
+- The blank page entry should have: "Is_Inserted_Blank": true, "Blocks": []
 - All pages AFTER the blank page must have their Page_Number adjusted accordingly
 - Original_Page_Number tracks the original position for coordinate reference
 
@@ -188,7 +208,15 @@ Condition: page_1_empty_percentage=15, page_2_empty_percentage=70 (page 1 is ≤
 ⚠️ FINAL REMINDER - VALID JSON OUTPUT REQUIRED ⚠️
 - All coordinate values must be PURE DECIMAL NUMBERS between 0.0 and 1.0
 - NEVER insert words, adjectives, or any text inside coordinate arrays
+- NEVER let content from one JSON field leak into another field
+- Keep "text" field content COMPLETELY SEPARATE from "Coordinates" array
 - Example: [0.12, 0.45, 0.89, 0.52] ✓ CORRECT
 - Example: [0 astounding, 0.45, 0.89, 0.52] ✗ WRONG - will break JSON parsing
+- Example: [0.12, 0.45, विशेषाधिकार, 0.52] ✗ WRONG - Hindi text in coordinates
 - The output must be valid, parseable JSON with no syntax errors
+
+⚠️ SELF-CHECK BEFORE RETURNING RESPONSE:
+1. Verify every "Coordinates" array has exactly 4 decimal numbers
+2. Verify no text content appears inside any coordinate array
+3. Verify the JSON is syntactically valid and can be parsed
 
