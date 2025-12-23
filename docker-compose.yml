@@ -5,6 +5,7 @@ services:
     image: redis:7-alpine
     ports:
       - "6379:6379"
+    restart: unless-stopped
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 10s
@@ -17,6 +18,7 @@ services:
       dockerfile: Dockerfile
     ports:
       - "5003:5003"
+    restart: unless-stopped
     environment:
       - REDIS_URL=redis://redis:6379/0
       - LOG_DIR=/app/logs
@@ -32,6 +34,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.worker
+    restart: unless-stopped
     environment:
       - REDIS_URL=redis://redis:6379/0
       - LOG_DIR=/app/logs
