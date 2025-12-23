@@ -6,7 +6,43 @@ Also draws red underlines from OCR data (Gemini output).
 
 import os
 import random
+import re
 import fitz  # PyMuPDF
+
+
+def contains_devanagari(text: str) -> bool:
+    """
+    Check if text contains Devanagari (Hindi) characters.
+    Devanagari Unicode range: U+0900 to U+097F
+    """
+    if not text:
+        return False
+    # Check for Devanagari characters
+    devanagari_pattern = re.compile(r'[\u0900-\u097F]')
+    return bool(devanagari_pattern.search(text))
+
+
+def get_font_for_text(text: str, base_dir: str) -> tuple:
+    """
+    Get the appropriate font based on text content.
+    Returns (font_name, font_path) tuple.
+
+    Uses Noto Sans Devanagari for Hindi text, PatrickHand for English.
+    """
+    devanagari_font_path = os.path.join(base_dir, "NotoSansDevanagari-Regular.ttf")
+    patrickhand_font_path = os.path.join(base_dir, "PatrickHand-Regular.ttf")
+
+    if contains_devanagari(text):
+        if os.path.exists(devanagari_font_path):
+            return ("notosans", devanagari_font_path)
+        else:
+            # Fallback to PyMuPDF's built-in font that may support Unicode
+            return ("helv", None)
+    else:
+        if os.path.exists(patrickhand_font_path):
+            return ("patrickhand", patrickhand_font_path)
+        else:
+            return ("helv", None)
 
 
 def draw_tick_mark(page, x: float, y: float, size: float = 12, color: tuple = (0, 0.6, 0), width: float = 2):
@@ -161,13 +197,16 @@ def draw_underlines_from_ocr(doc, ocr_data: dict, pages_metadata: list) -> int:
 
 
 def annotate_pdf_with_comments(pdf_path: str, evaluation: dict, output_path: str,
-                                ocr_data: dict = None, pages_metadata: list = None) -> str:
+                                ocr_data: dict = None, pages_metadata: list = None,
+                                summary_page_position: int = None,
+                                is_existing_page_for_summary: bool = False) -> str:
     """
     Annotate PDF with evaluation comments and red underlines.
 
     This function:
     1. First draws RED underlines from Gemini OCR output (if provided)
     2. Then adds text annotations from OpenAI evaluation in the right margin
+    3. Adds Overall Summary on the designated summary_page_position
 
     Args:
         pdf_path: Path to the original PDF
@@ -175,6 +214,11 @@ def annotate_pdf_with_comments(pdf_path: str, evaluation: dict, output_path: str
         output_path: Path for output PDF
         ocr_data: OCR output dict containing Underlines array (optional)
         pages_metadata: List of page metadata for coordinate conversion (optional)
+        summary_page_position: Page number (1-indexed) where Overall Summary should be placed
+                              If None, no Overall Summary is added (old behavior of adding at end is removed)
+        is_existing_page_for_summary: If True, the summary page has existing content and we should
+                                      place the Overall Summary after the last content block (Case 1).
+                                      If False, the page is blank and we place at the top (Case 2).
 
     Returns:
         Path to the annotated PDF
@@ -371,8 +415,9 @@ def annotate_pdf_with_comments(pdf_path: str, evaluation: dict, output_path: str
 
                 # No box drawn - transparent background, no border
 
-                # Insert text inside the box
-                font_path = os.path.join(os.path.dirname(__file__), "PatrickHand-Regular.ttf")
+                # Get appropriate font for this comment text (Hindi or English)
+                base_dir = os.path.dirname(__file__)
+                comment_font_name, comment_font_path = get_font_for_text(comment_text, base_dir)
 
                 # Wrap text manually
                 words = comment_text.split()
@@ -391,18 +436,27 @@ def annotate_pdf_with_comments(pdf_path: str, evaluation: dict, output_path: str
                 if current_line:
                     lines.append(current_line)
 
-                # Insert each line
+                # Insert each line with appropriate font
                 y_offset = box_y1 + 20
                 for line in lines:
                     if y_offset + 10 < box_y2:
-                        page.insert_text(
-                            fitz.Point(box_x1 + 5, y_offset),
-                            line,
-                            fontsize=16,
-                            color=RED_COLOR,
-                            fontname="patrickhand",
-                            fontfile=font_path
-                        )
+                        if comment_font_path:
+                            page.insert_text(
+                                fitz.Point(box_x1 + 5, y_offset),
+                                line,
+                                fontsize=16,
+                                color=RED_COLOR,
+                                fontname=comment_font_name,
+                                fontfile=comment_font_path
+                            )
+                        else:
+                            page.insert_text(
+                                fitz.Point(box_x1 + 5, y_offset),
+                                line,
+                                fontsize=16,
+                                color=RED_COLOR,
+                                fontname=comment_font_name
+                            )
                         y_offset += 20
 
                 annotation_count += 1
@@ -411,7 +465,7 @@ def annotate_pdf_with_comments(pdf_path: str, evaluation: dict, output_path: str
     # ===========================================
     # STEP 4: Add Summary at bottom of each question's last page
     # ===========================================
-    font_path = os.path.join(os.path.dirname(__file__), "PatrickHand-Regular.ttf")
+    base_dir = os.path.dirname(__file__)
     SUMMARY_COLOR = (0.8, 0, 0)  # Red color for summary (changed from blue)
     summary_count = 0
 
@@ -436,6 +490,9 @@ def annotate_pdf_with_comments(pdf_path: str, evaluation: dict, output_path: str
         page_height = page.rect.height
         page_width = page.rect.width
 
+        # Get appropriate font for this summary text (Hindi or English)
+        summary_font_name, summary_font_path = get_font_for_text(summary_text, base_dir)
+
         # Position summary at bottom of page (avoiding bottom 5% margin)
         summary_y = page_height - 60  # 60 points from bottom
         summary_x = 50  # Left margin
@@ -458,99 +515,151 @@ def annotate_pdf_with_comments(pdf_path: str, evaluation: dict, output_path: str
         if current_line:
             lines.append(current_line)
 
-        # Insert summary lines
+        # Insert summary lines with appropriate font
         y_offset = summary_y  # Start at summary position (no label above)
         for line in lines:
             if y_offset < page_height - 10:
-                page.insert_text(
-                    fitz.Point(summary_x + 10, y_offset),
-                    line,
-                    fontsize=15,  # Increased from 12 to 15
-                    color=SUMMARY_COLOR,
-                    fontname="patrickhand",
-                    fontfile=font_path
-                )
+                if summary_font_path:
+                    page.insert_text(
+                        fitz.Point(summary_x + 10, y_offset),
+                        line,
+                        fontsize=15,
+                        color=SUMMARY_COLOR,
+                        fontname=summary_font_name,
+                        fontfile=summary_font_path
+                    )
+                else:
+                    page.insert_text(
+                        fitz.Point(summary_x + 10, y_offset),
+                        line,
+                        fontsize=15,
+                        color=SUMMARY_COLOR,
+                        fontname=summary_font_name
+                    )
                 y_offset += 18  # Increased line spacing
 
         summary_count += 1
         print(f"Added summary for {q_id} on page {page_num + 1}")
 
     # ===========================================
-    # STEP 5: Add OverallSummary on a new blank A4 page
+    # STEP 5: Add OverallSummary on the designated summary page
     # ===========================================
     overall_summary = evaluation.get("OverallSummary", [])
+    overall_summary_added = False
 
-    if overall_summary:
-        # Create a new A4 page at the end
-        # A4 dimensions: 595 x 842 points
-        new_page = doc.new_page(width=595, height=842)
-        print("Added new A4 page for Overall Summary")
+    if overall_summary and summary_page_position is not None:
+        # Convert to 0-indexed
+        summary_page_idx = summary_page_position - 1
 
-        # Title
-        title_y = 60
-        new_page.insert_text(
-            fitz.Point(50, title_y),
-            "Overall Summary & Recommendations",
-            fontsize=22,
-            color=(0.1, 0.1, 0.5),  # Dark blue
-            fontname="patrickhand",
-            fontfile=font_path
-        )
+        if 0 <= summary_page_idx < len(doc):
+            summary_page = doc[summary_page_idx]
+            print(f"Adding Overall Summary on page {summary_page_position}")
 
-        # Draw a line under title
-        shape = new_page.new_shape()
-        shape.draw_line(fitz.Point(50, title_y + 10), fitz.Point(545, title_y + 10))
-        shape.finish(color=(0.1, 0.1, 0.5), width=2)
-        shape.commit()
+            # Get page dimensions
+            current_page_height = summary_page.rect.height
+            current_page_width = summary_page.rect.width
 
-        # Add bullet points
-        y_offset = title_y + 50
-        bullet_color = (0.2, 0.2, 0.2)  # Dark gray for text
+            # Original dimensions (before margins were added)
+            original_page_height = current_page_height - BOTTOM_MARGIN  # Remove bottom margin
 
-        for i, item in enumerate(overall_summary, 1):
-            # Draw bullet point (filled circle)
-            bullet_x = 60
-            bullet_y = y_offset - 4
+            # Determine starting Y position based on whether this is an existing page with content
+            if is_existing_page_for_summary:
+                # Case 1: Existing page with some content (>50% empty)
+                # Start at top 20% of the page, NO title
+                title_y = original_page_height * 0.20  # Top 20% of the original page area
+                print(f"  Case 1: Placing at top 20% of page (starting at: {title_y:.1f}), no title")
 
-            shape = new_page.new_shape()
-            shape.draw_circle(fitz.Point(bullet_x, bullet_y), 4)
-            shape.finish(color=(0, 0.5, 0), fill=(0, 0.5, 0))  # Green bullet
-            shape.commit()
+                # For Case 1, skip the title and start bullet points directly
+                y_offset = title_y
+            else:
+                # Case 2: Blank page inserted at position 1, place at the top with title
+                title_y = 60
+                print(f"  Case 2: Placing at top of blank page (title at: {title_y})")
 
-            # Wrap text for bullet point
-            max_width = 480
-            words = item.split()
-            lines = []
-            current_line = ""
-
-            for word in words:
-                test_line = current_line + " " + word if current_line else word
-                if len(test_line) * 8 < max_width:
-                    current_line = test_line
-                else:
-                    if current_line:
-                        lines.append(current_line)
-                    current_line = word
-
-            if current_line:
-                lines.append(current_line)
-
-            # Insert bullet text
-            for j, line in enumerate(lines):
-                text_x = bullet_x + 15 if j == 0 else bullet_x + 15
-                new_page.insert_text(
-                    fitz.Point(text_x, y_offset),
-                    line,
-                    fontsize=14,
-                    color=bullet_color,
+                # Add title for Case 2 only
+                summary_page.insert_text(
+                    fitz.Point(50, title_y),
+                    "Overall Summary & Recommendations",
+                    fontsize=22,
+                    color=(0.1, 0.1, 0.5),  # Dark blue
                     fontname="patrickhand",
                     fontfile=font_path
                 )
-                y_offset += 20
 
-            y_offset += 15  # Extra space between bullet points
+                # Draw a line under title
+                shape = summary_page.new_shape()
+                shape.draw_line(fitz.Point(50, title_y + 10), fitz.Point(545, title_y + 10))
+                shape.finish(color=(0.1, 0.1, 0.5), width=2)
+                shape.commit()
 
-        print(f"Added {len(overall_summary)} bullet points to Overall Summary page")
+                # Start bullet points after title
+                y_offset = title_y + 50
+
+            # Add bullet points
+            bullet_color = (0.2, 0.2, 0.2)  # Dark gray for text
+            base_dir = os.path.dirname(__file__)
+
+            for i, item in enumerate(overall_summary, 1):
+                # Draw bullet point (filled circle)
+                bullet_x = 60
+                bullet_y = y_offset - 4
+
+                shape = summary_page.new_shape()
+                shape.draw_circle(fitz.Point(bullet_x, bullet_y), 4)
+                shape.finish(color=(0, 0.5, 0), fill=(0, 0.5, 0))  # Green bullet
+                shape.commit()
+
+                # Get appropriate font for this bullet item (Hindi or English)
+                bullet_font_name, bullet_font_path = get_font_for_text(item, base_dir)
+
+                # Wrap text for bullet point
+                max_width = 480
+                words = item.split()
+                lines = []
+                current_line = ""
+
+                for word in words:
+                    test_line = current_line + " " + word if current_line else word
+                    if len(test_line) * 8 < max_width:
+                        current_line = test_line
+                    else:
+                        if current_line:
+                            lines.append(current_line)
+                        current_line = word
+
+                if current_line:
+                    lines.append(current_line)
+
+                # Insert bullet text with appropriate font
+                for j, line in enumerate(lines):
+                    text_x = bullet_x + 15 if j == 0 else bullet_x + 15
+                    if bullet_font_path:
+                        summary_page.insert_text(
+                            fitz.Point(text_x, y_offset),
+                            line,
+                            fontsize=14,
+                            color=bullet_color,
+                            fontname=bullet_font_name,
+                            fontfile=bullet_font_path
+                        )
+                    else:
+                        summary_page.insert_text(
+                            fitz.Point(text_x, y_offset),
+                            line,
+                            fontsize=14,
+                            color=bullet_color,
+                            fontname=bullet_font_name
+                        )
+                    y_offset += 20
+
+                y_offset += 15  # Extra space between bullet points
+
+            print(f"Added {len(overall_summary)} bullet points to Overall Summary on page {summary_page_position}")
+            overall_summary_added = True
+        else:
+            print(f"Warning: Summary page position {summary_page_position} is out of range (total pages: {len(doc)})")
+    elif overall_summary:
+        print("Warning: OverallSummary exists but no summary_page_position specified - skipping Overall Summary")
 
     # Save the annotated PDF to the final output path
     doc.save(output_path, garbage=4, deflate=True)
@@ -569,7 +678,7 @@ def annotate_pdf_with_comments(pdf_path: str, evaluation: dict, output_path: str
     print(f"📍 Total underlines drawn: {underline_count}")
     print(f"✓ Total tick marks drawn: {tick_count}")
     print(f"📋 Total summaries added: {summary_count}")
-    print(f"📄 Overall Summary page: {'Added' if overall_summary else 'N/A'}")
+    print(f"📄 Overall Summary: {'Added on page ' + str(summary_page_position) if overall_summary_added else 'N/A'}")
     print("=" * 60)
 
     return output_path

@@ -515,13 +515,17 @@ def run_full_pipeline(
         empty_page_detection = ocr_data_for_detection.get("empty_page_detection", {})
         insert_blank_page = empty_page_detection.get("insert_blank_page", False)
         blank_page_position = empty_page_detection.get("blank_page_position")
+        case_applied = empty_page_detection.get("case_applied", 0)
+        summary_page_position = empty_page_detection.get("summary_page_position")
 
         log.info("Empty page detection result:")
         log.info("  Page 1 empty %%: %s", empty_page_detection.get("page_1_empty_percentage", "N/A"))
         log.info("  Page 2 empty %%: %s", empty_page_detection.get("page_2_empty_percentage", "N/A"))
-        log.info("  Both mostly empty: %s", empty_page_detection.get("both_pages_mostly_empty", "N/A"))
+        log.info("  Page 3 empty %%: %s", empty_page_detection.get("page_3_empty_percentage", "N/A"))
+        log.info("  Case applied: %s", case_applied)
         log.info("  Insert blank page: %s", insert_blank_page)
         log.info("  Blank page position: %s", blank_page_position)
+        log.info("  Summary page position: %s", summary_page_position)
 
         # PDF path for annotations (may be modified if blank page is inserted)
         pdf_for_annotation = pdf_path
@@ -655,6 +659,14 @@ def run_full_pipeline(
         log.info("STEP 3: Creating Annotated PDF")
         log.info("=" * 60)
         log.info("Using PDF for annotation: %s", pdf_for_annotation)
+        log.info("Summary page position: %s", summary_page_position)
+        log.info("Case applied: %s", case_applied)
+
+        # Determine if we're using an existing page for summary (Case 1) or a new blank page (Case 2)
+        # Case 1: insert_blank_page=False, using existing page 2 or 3 that has >50% empty but has some content
+        # Case 2: insert_blank_page=True, new blank page inserted at position 1
+        is_existing_page_for_summary = (case_applied == 1 and not insert_blank_page)
+        log.info("Is existing page for summary: %s", is_existing_page_for_summary)
 
         try:
             # Pass OCR data and metadata for drawing underlines
@@ -664,7 +676,9 @@ def run_full_pipeline(
                 evaluation,
                 annotated_pdf_path,
                 ocr_data=ocr_data,      # For drawing red underlines
-                pages_metadata=metadata  # For coordinate conversion
+                pages_metadata=metadata,  # For coordinate conversion
+                summary_page_position=summary_page_position,  # Page for Overall Summary
+                is_existing_page_for_summary=is_existing_page_for_summary  # Whether to place after existing content
             )
             log.info("✅ Annotated PDF saved to: %s", annotated_pdf_path)
         except Exception as e:

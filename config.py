@@ -41,6 +41,10 @@ CELERY_CONFIG = {
     # Prevent task loss during long processing
     'broker_transport_options': {
         'visibility_timeout': 1200,       # 20 minutes - must be > task duration
+        'socket_timeout': 30,             # Socket timeout for Redis operations
+        'socket_connect_timeout': 30,     # Connection timeout
+        'retry_on_timeout': True,         # Retry on timeout
+        'health_check_interval': 25,      # Check connection health periodically
     },
     
     # Don't prefetch tasks for long-running workers
@@ -48,5 +52,20 @@ CELERY_CONFIG = {
     
     # Keep results for 24 hours
     'result_expires': 86400,
+
+    # ==============================================================================
+    # Redis Connection Resilience - Handle failovers/reconnections
+    # ==============================================================================
+    # Retry connecting to broker if connection is lost
+    'broker_connection_retry': True,
+    'broker_connection_max_retries': None,  # Retry forever
+
+    # Result backend connection settings
+    'redis_socket_timeout': 30,
+    'redis_socket_connect_timeout': 30,
+    'redis_retry_on_timeout': True,
+
+    # Worker settings for resilience
+    'worker_cancel_long_running_tasks_on_connection_loss': False,
 }
 
