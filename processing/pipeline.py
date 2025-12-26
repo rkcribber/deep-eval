@@ -469,6 +469,9 @@ def run_full_pipeline(
     evaluation_output_path = os.path.join(output_dir, f"{task_id}_evaluation.json")
     annotated_pdf_path = os.path.join(output_dir, f"{task_id}_annotated.pdf")
 
+    # Initialize tracking variable for Case 2 (new blank page inserted at start)
+    is_new_summary_page_added_at_start = False
+
     try:
         # Initialize processor
         processor = DocumentProcessor(
@@ -518,6 +521,11 @@ def run_full_pipeline(
         case_applied = empty_page_detection.get("case_applied", 0)
         summary_page_position = empty_page_detection.get("summary_page_position")
 
+        # Determine if a new summary page was added at the start (Case 2)
+        # True = Case 2 (new blank page inserted at position 1)
+        # False = Case 1 (using existing empty page) or no action needed
+        is_new_summary_page_added_at_start = insert_blank_page and blank_page_position == 1
+
         log.info("Empty page detection result:")
         log.info("  Page 1 empty %%: %s", empty_page_detection.get("page_1_empty_percentage", "N/A"))
         log.info("  Page 2 empty %%: %s", empty_page_detection.get("page_2_empty_percentage", "N/A"))
@@ -526,6 +534,34 @@ def run_full_pipeline(
         log.info("  Insert blank page: %s", insert_blank_page)
         log.info("  Blank page position: %s", blank_page_position)
         log.info("  Summary page position: %s", summary_page_position)
+        log.info("  Is new summary page added at start: %s", is_new_summary_page_added_at_start)
+
+        # ==============================================================
+        # Send is_summary_extra_page_inserted to External API
+        # ==============================================================
+        log.info("Sending is_summary_extra_page_inserted to external API...")
+        try:
+            summary_page_payload = {
+                "uid": str(uid),
+                "data": {
+                    "is_summary_extra_page_inserted": is_new_summary_page_added_at_start
+                }
+            }
+
+            summary_page_response = requests.put(
+                EXTERNAL_API_URL,
+                json=summary_page_payload,
+                headers={'Content-Type': 'application/json'},
+                timeout=30,
+                verify=False
+            )
+
+            if summary_page_response.status_code == 200:
+                log.info("✅ External API call successful for is_summary_extra_page_inserted: %s", is_new_summary_page_added_at_start)
+            else:
+                log.warning("⚠️ External API call for is_summary_extra_page_inserted failed with status: %d", summary_page_response.status_code)
+        except Exception as e:
+            log.warning("⚠️ External API call for is_summary_extra_page_inserted failed: %s", str(e))
 
         # PDF path for annotations (may be modified if blank page is inserted)
         pdf_for_annotation = pdf_path
@@ -788,6 +824,7 @@ def run_full_pipeline(
         log.info("   Verified Copy:   %s", "Success" if verified_copy_api_success else "Failed")
         log.info("   External API:    %s", "Success" if external_api_success else f"Failed - {external_api_message}")
         log.info("   Process API:     %s", "Success" if process_api_success else f"Failed - {process_api_message}" if external_api_success else "Skipped")
+        log.info("   New Summary Page Added at Start: %s", is_new_summary_page_added_at_start)
 
         return {
             'status': 'completed',
@@ -802,6 +839,7 @@ def run_full_pipeline(
             'external_api_message': external_api_message if not external_api_success else None,
             'process_api_success': process_api_success,
             'process_api_message': process_api_message if not process_api_success else None,
+            'is_new_summary_page_added_at_start': is_new_summary_page_added_at_start,
         }
 
     except Exception as e:
@@ -813,5 +851,6 @@ def run_full_pipeline(
             'evaluation_output_path': evaluation_output_path if os.path.exists(evaluation_output_path) else None,
             'annotated_pdf_path': None,
             'external_api_success': False,
+            'is_new_summary_page_added_at_start': is_new_summary_page_added_at_start,
         }
 
