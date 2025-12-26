@@ -489,7 +489,8 @@ class DocumentProcessor:
         self,
         student_text: str,
         student_coordinates: str,
-        model_answer: str,
+        model_answer: str = None,
+        model_answer_pdf_path: str = None,
     ) -> Dict[str, Any]:
         """
         Evaluate student answer against model answer using OpenAI Assistant API.
@@ -497,23 +498,14 @@ class DocumentProcessor:
         Args:
             student_text: OCR extracted text from student's answer
             student_coordinates: OCR coordinates from student's answer
-            model_answer: OCR extracted text from model answer
+            model_answer: OCR extracted text from model answer (used if no PDF provided)
+            model_answer_pdf_path: Path to model answer PDF file (optional, takes precedence)
 
         Returns:
             Dictionary containing evaluation results
         """
         if not self.openai_api_key or not self.openai_assistant_id:
             raise RuntimeError("OpenAI API key and Assistant ID are required for evaluation")
-
-        # Build the user prompt
-        user_prompt = f"""STUDENT ANSWER (OCR extracted):
-{student_text}
-
-STUDENT ANSWER (OCR Coordinates):
-{student_coordinates}
-
-MODEL ANSWER (OCR extracted):
-{model_answer}"""
 
         # Set up headers for OpenAI API
         headers = {
@@ -525,15 +517,84 @@ MODEL ANSWER (OCR extracted):
         # Create session with retry logic
         session = create_retry_session(retries=3, backoff_factor=2)
 
-        # 1. Create the thread
-        thread_response = session.post(
-            "https://api.openai.com/v1/threads",
-            headers=headers,
-            json={
+        # Upload model answer PDF if provided
+        file_id = None
+        if model_answer_pdf_path and os.path.exists(model_answer_pdf_path):
+            logger.info("Uploading model answer PDF to OpenAI: %s", model_answer_pdf_path)
+            try:
+                upload_headers = {
+                    "Authorization": f"Bearer {self.openai_api_key}",
+                }
+                with open(model_answer_pdf_path, 'rb') as pdf_file:
+                    files = {
+                        'file': (os.path.basename(model_answer_pdf_path), pdf_file, 'application/pdf'),
+                        'purpose': (None, 'assistants'),
+                    }
+                    upload_response = session.post(
+                        "https://api.openai.com/v1/files",
+                        headers=upload_headers,
+                        files=files,
+                        verify=False,
+                    )
+
+                if upload_response.ok:
+                    file_data = upload_response.json()
+                    file_id = file_data.get("id")
+                    logger.info("✅ Model answer PDF uploaded. File ID: %s", file_id)
+                else:
+                    logger.warning("Failed to upload model answer PDF: %s", upload_response.text)
+            except Exception as e:
+                logger.warning("Error uploading model answer PDF: %s", str(e))
+
+        # Build the user prompt
+        if file_id:
+            # PDF is attached, reference it in the prompt
+            user_prompt = f"""STUDENT ANSWER (OCR extracted):
+{student_text}
+
+STUDENT ANSWER (OCR Coordinates):
+{student_coordinates}
+
+MODEL ANSWER: Please refer to the attached PDF file for the model answer."""
+        else:
+            # No PDF, use text-based model answer
+            model_answer_text = model_answer if model_answer else student_text
+            user_prompt = f"""STUDENT ANSWER (OCR extracted):
+{student_text}
+
+STUDENT ANSWER (OCR Coordinates):
+{student_coordinates}
+
+MODEL ANSWER (OCR extracted):
+{model_answer_text}"""
+
+        # 1. Create the thread with message and optional file attachment
+        if file_id:
+            thread_payload = {
+                "messages": [
+                    {
+                        "role": "user",
+                        "content": user_prompt,
+                        "attachments": [
+                            {
+                                "file_id": file_id,
+                                "tools": [{"type": "file_search"}]
+                            }
+                        ]
+                    },
+                ],
+            }
+        else:
+            thread_payload = {
                 "messages": [
                     {"role": "user", "content": user_prompt},
                 ],
-            },
+            }
+
+        thread_response = session.post(
+            "https://api.openai.com/v1/threads",
+            headers=headers,
+            json=thread_payload,
             verify=False,
         )
 

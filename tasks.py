@@ -165,6 +165,11 @@ def process_data_task(self, data: dict) -> dict:
 
         log.info("Processing for uid: %s", uid)
 
+        # Get optional model_answer_url
+        model_answer_url = data.get('model_answer_url')
+        if model_answer_url:
+            log.info("Model answer URL provided: %s", model_answer_url[:100] + "..." if len(model_answer_url) > 100 else model_answer_url)
+
         # ===========================================
         # STEP 2: Download PDF
         # ===========================================
@@ -191,6 +196,7 @@ def process_data_task(self, data: dict) -> dict:
             openai_api_key=OPENAI_API_KEY,
             openai_assistant_id=OPENAI_ASSISTANT_ID,
             progress_callback=update_progress,
+            model_answer_url=model_answer_url,
         )
 
         # ===========================================

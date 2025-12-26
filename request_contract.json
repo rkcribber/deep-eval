@@ -1,12 +1,13 @@
 {
     "required_fields": ["student_uploaded_pdf_url", "uid"],
-    "optional_fields": ["message", "value"],
+    "optional_fields": ["message", "value", "model_answer_url"],
     "description": "Submit a PDF for OCR and evaluation",
     "example": {
         "student_uploaded_pdf_url": "https://example.com/student-answer.pdf",
         "uid": "53591",
         "message": "Optional message",
-        "value": 123
+        "value": 123,
+        "model_answer_url": "https://example.com/model-answer.pdf"
     }
 }
 

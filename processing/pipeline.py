@@ -418,6 +418,7 @@ def run_full_pipeline(
     openai_api_key: str,
     openai_assistant_id: str,
     progress_callback: Callable[[int, str], None] = None,
+    model_answer_url: str = None,
 ) -> Dict[str, Any]:
     """
     Run the full document processing pipeline.
@@ -442,6 +443,7 @@ def run_full_pipeline(
         openai_api_key: OpenAI API key
         openai_assistant_id: OpenAI Assistant ID
         progress_callback: Optional callback for progress updates (progress, step)
+        model_answer_url: Optional URL to model answer PDF for comparison
 
     Returns:
         Dictionary with result details:
@@ -500,7 +502,7 @@ def run_full_pipeline(
         log.info("✅ OCR Output saved to: %s", ocr_output_path)
         log.info("📄 Processed %d page(s)", len(metadata))
 
-        update_progress(40, "ocr_completed")
+        update_progress(35, "ocr_completed")
 
         # ==============================================================
         # STEP 1b: Insert Blank Page Based on empty_page_detection
@@ -657,17 +659,44 @@ def run_full_pipeline(
         student_text = extract_text_from_ocr(ocr_data)
         student_coords = ocr_result  # Full JSON with coordinates
 
-        log.info("Extracted %d characters of text", len(student_text))
-        log.info("Sending to OpenAI Assistant...")
+        log.info("Extracted %d characters of student text", len(student_text))
 
-        # For self-evaluation (no model answer), use same text
-        model_answer = student_text
+        # Download model answer PDF if URL is provided
+        model_answer_pdf_path = None
+        if model_answer_url:
+            log.info("Model answer URL provided: %s", model_answer_url[:100] + "..." if len(model_answer_url) > 100 else model_answer_url)
+            try:
+                import tempfile
+                model_answer_response = requests.get(model_answer_url, stream=True, timeout=120, verify=False)
+                model_answer_response.raise_for_status()
+
+                # Save to temp file
+                with tempfile.NamedTemporaryFile(suffix='.pdf', delete=False) as tmp_file:
+                    for chunk in model_answer_response.iter_content(chunk_size=8192):
+                        tmp_file.write(chunk)
+                    model_answer_pdf_path = tmp_file.name
+
+                log.info("✅ Model answer PDF downloaded to: %s", model_answer_pdf_path)
+            except Exception as e:
+                log.warning("⚠️ Failed to download model answer PDF: %s. Using self-evaluation mode.", str(e))
+                model_answer_pdf_path = None
+
+        log.info("Sending to OpenAI Assistant...")
 
         evaluation = processor.evaluate_text_assistant_ai(
             student_text=student_text,
             student_coordinates=student_coords,
-            model_answer=model_answer
+            model_answer=student_text,  # Fallback if no PDF
+            model_answer_pdf_path=model_answer_pdf_path,  # PDF takes precedence
         )
+
+        # Clean up temp model answer PDF
+        if model_answer_pdf_path:
+            try:
+                os.remove(model_answer_pdf_path)
+                log.info("Cleaned up temp model answer PDF")
+            except:
+                pass
 
         # Save evaluation result
         with open(evaluation_output_path, "w") as f:
