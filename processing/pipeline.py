@@ -611,13 +611,13 @@ def run_full_pipeline(
                 blank_page_pdf_url = upload_result.get('public_url')
                 log.info("✅ Upload successful. Public URL: %s", blank_page_pdf_url)
 
-                # Call external API to update with copy_with_blank_pages_url
-                log.info("Calling external API with copy_with_blank_pages_url...")
+                # Call external API to update with resized_copy_url
+                log.info("Calling external API with resized_copy_url...")
                 try:
                     external_payload = {
                         "uid": str(uid),
                         "data": {
-                            "copy_with_blank_pages_url": blank_page_pdf_url
+                            "resized_copy_url": blank_page_pdf_url
                         }
                     }
 
@@ -630,7 +630,7 @@ def run_full_pipeline(
                     )
 
                     if external_response.status_code == 200:
-                        log.info("✅ External API call successful for copy_with_blank_pages_url")
+                        log.info("✅ External API call successful for resized_copy_url")
                     else:
                         log.warning("⚠️ External API call failed with status: %d", external_response.status_code)
                 except Exception as e:
