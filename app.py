@@ -186,7 +186,6 @@ def process_json():
                 external_payload = {
                     "uid": str(uid),
                     "data": {
-                        "status": "Verified",
                         "verified_copy": public_url
                     }
                 }
