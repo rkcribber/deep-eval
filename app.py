@@ -92,6 +92,7 @@ def process_json():
               "2": [...]
           }
         - add_margin (optional): Whether to add 2.5 inch right margin (default: true)
+        - is_summary_extra_page_inserted (optional): Boolean to insert a blank page at the start (default: false)
 
     Returns:
         - status: success/error
@@ -140,11 +141,13 @@ def process_json():
     pdf_url = data['pdf_url']
     annotations = data['annotations']
     add_margin = data.get('add_margin', True)
+    is_summary_extra_page_inserted = data.get('is_summary_extra_page_inserted', False)
 
     logger.info("[/api/process] UID: %s", uid)
     logger.info("[/api/process] PDF URL: %s", pdf_url)
     logger.info("[/api/process] Number of pages with annotations: %d", len(annotations))
     logger.info("[/api/process] Add margin: %s", add_margin)
+    logger.info("[/api/process] Is summary extra page inserted: %s", is_summary_extra_page_inserted)
 
     # Import and run the PDF annotator
     from processing.pdf_annotator import process_pdf_with_annotations
@@ -154,7 +157,8 @@ def process_json():
     result = process_pdf_with_annotations(
         pdf_url=pdf_url,
         annotations=annotations,
-        add_margin=add_margin
+        add_margin=add_margin,
+        is_summary_extra_page_inserted=is_summary_extra_page_inserted
     )
 
     if result['status'] == 'success':

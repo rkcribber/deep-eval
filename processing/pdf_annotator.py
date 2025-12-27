@@ -573,7 +573,7 @@ def add_annotations_to_pdf(pdf_path: str, annotations: dict, output_path: str, a
     return output_path
 
 
-def process_pdf_with_annotations(pdf_url: str, annotations: dict, output_dir: str = None, add_margin: bool = True) -> dict:
+def process_pdf_with_annotations(pdf_url: str, annotations: dict, output_dir: str = None, add_margin: bool = True, is_summary_extra_page_inserted: bool = False) -> dict:
     """
     Main function to download PDF and add annotations.
 
@@ -582,6 +582,7 @@ def process_pdf_with_annotations(pdf_url: str, annotations: dict, output_dir: st
         annotations: Annotation data dictionary
         output_dir: Directory for output files (default: /app/output or ./output)
         add_margin: Whether to add right margin
+        is_summary_extra_page_inserted: Whether to insert a blank page at the start
 
     Returns:
         Dictionary with status and output file path
@@ -600,6 +601,26 @@ def process_pdf_with_annotations(pdf_url: str, annotations: dict, output_dir: st
         logger.info("[pdf_annotator] Downloading PDF from: %s", pdf_url)
         input_pdf_path = download_pdf(pdf_url, output_dir)
         logger.info("[pdf_annotator] PDF downloaded to: %s", input_pdf_path)
+
+        # Insert blank page at start if is_summary_extra_page_inserted is True
+        if is_summary_extra_page_inserted:
+            logger.info("[pdf_annotator] Inserting blank page at start (is_summary_extra_page_inserted=True)")
+            modified_pdf_path = os.path.join(output_dir, f"{job_id}_with_blank_page.pdf")
+            doc = fitz.open(input_pdf_path)
+            # Insert blank A4 page at position 0 (start)
+            A4_WIDTH = 595  # A4 width in points
+            A4_HEIGHT = 842  # A4 height in points
+            doc.insert_page(0, width=A4_WIDTH, height=A4_HEIGHT)
+            logger.info("[pdf_annotator] ✅ Blank page inserted at start. Total pages: %d", len(doc))
+            doc.save(modified_pdf_path)
+            doc.close()
+            # Use the modified PDF for annotations
+            try:
+                os.remove(input_pdf_path)
+            except:
+                pass
+            input_pdf_path = modified_pdf_path
+            logger.info("[pdf_annotator] Using modified PDF with blank page: %s", input_pdf_path)
 
         # Generate output path
         output_pdf_path = os.path.join(output_dir, f"{job_id}_annotated.pdf")
