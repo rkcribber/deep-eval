@@ -23,8 +23,8 @@ FONT_NAME = "PatrickHand"
 FONT_URL = "https://github.com/google/fonts/raw/main/ofl/patrickhand/PatrickHand-Regular.ttf"
 
 
-def get_patrick_hand_font():
-    """Download Patrick Hand font if not present and return the font object."""
+def get_patrick_hand_font_path():
+    """Get the path to Patrick Hand font, downloading if necessary."""
     font_dir = os.path.dirname(os.path.abspath(__file__))
     font_path = os.path.join(font_dir, "PatrickHand-Regular.ttf")
 
@@ -36,6 +36,15 @@ def get_patrick_hand_font():
         except Exception as e:
             logger.error("[pdf_annotator] Failed to download font: %s", e)
             return None
+
+    return font_path
+
+
+def get_patrick_hand_font():
+    """Download Patrick Hand font if not present and return the font object."""
+    font_path = get_patrick_hand_font_path()
+    if font_path is None:
+        return None
 
     try:
         font = fitz.Font(fontfile=font_path)
@@ -322,6 +331,77 @@ def add_annotations_to_pdf(pdf_path: str, annotations: dict, output_path: str, a
             continue
 
         page = doc[page_num]
+
+        # Check if ALL annotations on this page are type "summary"
+        # If so, this is an OverallSummary page - render with title and bullets at coordinates
+        all_summary = len(page_annotations) > 0 and all(
+            ann.get("type") == "summary" for ann in page_annotations
+        )
+
+        if all_summary:
+            logger.info("[pdf_annotator] Page %s - Detected as OverallSummary page (all %d annotations are type 'summary')",
+                       page_num_str, len(page_annotations))
+
+            font_path = get_patrick_hand_font_path()
+
+            # Render each summary item as a bullet point at its coordinates
+            for ann in page_annotations:
+                bullet_x = ann.get("x", 60)
+                bullet_y = ann.get("y", 110)
+                text = ann.get("text", "")
+                bullet_font_size = ann.get("fontSize", 14)
+                max_width = ann.get("width", 480)
+
+                # Draw bullet point (filled green circle)
+                shape = page.new_shape()
+                shape.draw_circle(fitz.Point(bullet_x, bullet_y - 4), 4)
+                shape.finish(color=(0, 0.5, 0), fill=(0, 0.5, 0))  # Green bullet
+                shape.commit()
+
+                # Wrap text for bullet point
+                words = text.split()
+                lines = []
+                current_line = ""
+
+                for word in words:
+                    test_line = current_line + " " + word if current_line else word
+                    if len(test_line) * 8 < max_width:
+                        current_line = test_line
+                    else:
+                        if current_line:
+                            lines.append(current_line)
+                        current_line = word
+
+                if current_line:
+                    lines.append(current_line)
+
+                # Insert bullet text
+                bullet_color = (0.2, 0.2, 0.2)  # Dark gray for text
+                text_x = bullet_x + 15
+                current_y = bullet_y
+
+                for line in lines:
+                    if font_path:
+                        page.insert_text(
+                            fitz.Point(text_x, current_y),
+                            line,
+                            fontsize=bullet_font_size,
+                            color=bullet_color,
+                            fontname="patrickhand",
+                            fontfile=font_path
+                        )
+                    else:
+                        page.insert_text(
+                            fitz.Point(text_x, current_y),
+                            line,
+                            fontsize=bullet_font_size,
+                            color=bullet_color
+                        )
+                    current_y += 20
+
+            logger.info("[pdf_annotator] Page %s - OverallSummary rendered with %d bullet points",
+                       page_num_str, len(page_annotations))
+            continue  # Skip to next page
 
         for ann in page_annotations:
             x = ann.get("x", 0)

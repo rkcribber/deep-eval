@@ -39,7 +39,7 @@ def compress_pdf(input_path: str, output_path: str = None) -> str:
     """
     try:
         original_size = os.path.getsize(input_path)
-        logger.info("[do_spaces] Compressing PDF: %s (original size: %.2f KB)",
+        logger.info("[do_spaces] Compressing PDF: %s (original size: %.2f KB)", 
                    input_path, original_size / 1024)
 
         # Open the PDF
