@@ -642,6 +642,62 @@ def run_full_pipeline(
         else:
             log.info("ℹ️ No blank page insertion needed")
 
+            # ==============================================================
+            # STEP 1c (No Blank Page): Add Margins and Upload to DO Spaces
+            # ==============================================================
+            update_progress(43, "adding_margins_and_uploading")
+            log.info("=" * 60)
+            log.info("STEP 1c: Adding Margins and Uploading Original PDF to DO Spaces")
+            log.info("=" * 60)
+
+            # Create a copy of the original PDF with margins for upload
+            pdf_with_margins_path = os.path.join(output_dir, f"{task_id}_with_margins.pdf")
+
+            # Open the original PDF, add margins, and save
+            log.info("Adding right margin (2.5 inches) and bottom margin (1 inch)...")
+            margin_doc = fitz.open(pdf_path)
+            add_margins(margin_doc, right_margin_inches=2.5, bottom_margin_inches=1.0)
+            margin_doc.save(pdf_with_margins_path)
+            margin_doc.close()
+            log.info("✅ Margins added. Saved to: %s", pdf_with_margins_path)
+
+            # Upload to DO Spaces
+            destination_path = f"blank-page-pdfs/{uid}_{task_id}_with_margins.pdf"
+            log.info("Uploading to DO Spaces: %s", destination_path)
+
+            upload_result = upload_to_spaces(pdf_with_margins_path, destination_path)
+
+            if upload_result['status'] == 'success':
+                resized_pdf_url = upload_result.get('public_url')
+                log.info("✅ Upload successful. Public URL: %s", resized_pdf_url)
+
+                # Call external API to update with resized_copy_url
+                log.info("Calling external API with resized_copy_url...")
+                try:
+                    external_payload = {
+                        "uid": str(uid),
+                        "data": {
+                            "resized_copy_url": resized_pdf_url
+                        }
+                    }
+
+                    external_response = requests.put(
+                        EXTERNAL_API_URL,
+                        json=external_payload,
+                        headers={'Content-Type': 'application/json'},
+                        timeout=30,
+                        verify=False
+                    )
+
+                    if external_response.status_code == 200:
+                        log.info("✅ External API call successful for resized_copy_url")
+                    else:
+                        log.warning("⚠️ External API call failed with status: %d", external_response.status_code)
+                except Exception as e:
+                    log.warning("⚠️ External API call failed: %s", str(e))
+            else:
+                log.warning("⚠️ Upload to DO Spaces failed: %s", upload_result.get('message'))
+
         update_progress(44, "blank_page_check_completed")
 
         # ==============================================================
